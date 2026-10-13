@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b2b">
+
+  <title>Mensagens Plus</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0d1624;
+      color: white;
+    }
+
+    header {
+      background: #172638;
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h1 { margin: 0; font-size: 23px; }
+
+    .verde { color: #23db96; }
+
+    .subtitulo {
+      color: #b5c4d5;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .container {
+      max-width: 1050px;
+      margin: auto;
+    }
+
+    .login {
+      max-width: 400px;
+      margin: 55px auto;
+      padding: 24px;
+      border-radius: 16px;
+      background: #1b2b3d;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 8px 0;
+      color: white;
+      border: 1px solid #405068;
+      border-radius: 9px;
+      background: #101c2d;
+      font-size: 15px;
+    }
+
+    button {
+      padding: 13px 17px;
+      border: 0;
+      border-radius: 9px;
+      background: #23db96;
+      color: #062016;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .secundario {
+      background: #36465e;
+      color: white;
+    }
+
+    .login button {
+      margin-top: 10px;
+    }
+
+    .oculto { display: none !important; }
+
+    .app {
+      display: grid;
+      grid-template-columns: 310px 1fr;
+      height: calc(100dvh - 75px);
+    }
+
+    aside {
+      background: #142133;
+      padding: 17px;
+      border-right: 1px solid #34465d;
+      overflow-y: auto;
+    }
+
+    .contato {
+      padding: 16px;
+      border-bottom: 1px solid #334358;
+      cursor: pointer;
+    }
+
+    .contato:hover {
+      background: #29394d;
+    }
+
+    .conversa {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .titulo-chat {
+      background: #1b2b3d;
+      padding: 20px;
+      font-weight: bold;
+    }
+
+    .mensagens {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bolha {
+      max-width: 80%;
+      padding: 12px 15px;
+      border-radius: 13px;
+      background: #34465d;
+      overflow-wrap: anywhere;
+      align-self: flex-start;
+    }
+
+    .minha {
+      background: #176d50;
+      align-self: flex-end;
+    }
+
+    .enviar {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      background: #172638;
+    }
+
+    .enviar input {
+      margin: 0;
+      flex: 1;
+    }
+
+    .aviso {
+      color: #ffc878;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 650px) {
+      .app {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+
+      aside {
+        max-height: 35vh;
+      }
+
+      .conversa {
+        height: 65dvh;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <h1>Mensagens <span class="verde">Plus</span></h1>
+    <div class="subtitulo">Parceira Vem Comigo Deus</div>
+  </div>
+  <button id="sair" class="secundario oculto">
+    Sair
+  </button>
+</header>
+
+<div class="container">
+
+  <section id="login" class="login">
+    <h2>Bem-vindo ao Mensagens Plus</h2>
+    <p>Entre ou crie sua conta para conversar.</p>
+
+    <input id="email" type="email"
+           placeholder="Seu e-mail"
+           autocomplete="email">
+
+    <input id="senha" type="password"
+           placeholder="Sua senha"
+           autocomplete="current-password">
+
+    <button id="entrar">Entrar</button>
+    <button id="cadastrar" class="secundario">
+      Criar conta
+    </button>
+
+    <p>
+      <button id="google" class="secundario">
+        Entrar com Google
+      </button>
+    </p>
+
+    <div id="aviso-login" class="aviso"></div>
+  </section>
+
+  <section id="app" class="app oculto">
+
+    <aside>
+      <h2>Conversas</h2>
+      <p id="usuario-atual" class="subtitulo"></p>
+      <h3>Contatos</h3>
+      <div id="contatos">Carregando contatos...</div>
+    </aside>
+
+    <div class="conversa">
+      <div id="titulo-chat" class="titulo-chat">
+        Selecione uma pessoa
+      </div>
+
+      <div id="mensagens" class="mensagens"></div>
+
+      <form id="form-enviar" class="enviar">
+        <input id="texto" maxlength="3000"
+               placeholder="Digite sua mensagem"
+               disabled>
+        <button id="botao-enviar" disabled>
+          Enviar
+        </button>
+      </form>
+      <div id="aviso-chat" class="aviso"></div>
+    </div>
+
+  </section>
+
+</div>
+
+<script type="module" src="./app.js"></script>
+
+</body>
+</html>
