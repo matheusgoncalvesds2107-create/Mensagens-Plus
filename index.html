@@ -3,336 +3,382 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
- content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#075e54">
-<meta name="description"
- content="Mensagens Plus - Parceira Vem Comigo Deus">
-
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111b21">
+<meta name="description" content="Mensagens Plus - Parceira Vem Comigo Deus">
 <title>Mensagens Plus</title>
 
 <style>
 :root {
-  --verde: #00a884;
-  --verde-escuro: #075e54;
-  --fundo: #0b141a;
-  --painel: #111b21;
-  --painel2: #202c33;
-  --linha: #27343b;
-  --texto: #e9edef;
-  --cinza: #8696a0;
-  --bolha: #005c4b;
+  --bg: #0b141a;
+  --surface: #111b21;
+  --surface2: #202c33;
+  --hover: #2a3942;
+  --green: #00a884;
+  --green-light: #25d6ac;
+  --text: #e9edef;
+  --muted: #8696a0;
+  --border: #28363e;
+  --bubble: #005c4b;
 }
 
-* {
-  box-sizing: border-box;
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
-  margin: 0;
-  background: var(--fundo);
-  color: var(--texto);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
-button,
-input {
-  font-family: inherit;
+button, input { font: inherit; }
+button { cursor: pointer; }
+.oculto { display: none !important; }
+
+button:focus-visible,
+input:focus-visible,
+.contato:focus-visible {
+  outline: 2px solid var(--green-light);
+  outline-offset: 2px;
 }
 
-button {
-  cursor: pointer;
-}
+/* CABEÇALHO */
 
-.oculto {
-  display: none !important;
-}
-
-/* CABEÇALHO PRINCIPAL */
 header {
-  background: var(--painel2);
-  min-height: 66px;
-  padding: 11px 18px;
+  height: 68px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  align-items: center;
+  padding: 0 20px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
 .marca {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 12px;
 }
 
 .logo {
-  width: 42px;
-  height: 42px;
-  background: var(--verde);
-  color: #062a23;
-  border-radius: 50%;
+  width: 43px;
+  height: 43px;
+  border-radius: 15px;
   display: grid;
   place-items: center;
-  font-size: 23px;
-  font-weight: bold;
+  background: linear-gradient(135deg,#25d6ac,#00876a);
+  color: #06362c;
+  font-weight: 900;
+  font-size: 19px;
 }
 
 h1 {
+  font-size: 19px;
+  letter-spacing: -.5px;
   margin: 0;
-  font-size: 20px;
 }
 
-.verde {
-  color: #39dca9;
-}
+.verde { color: var(--green-light); }
 
 .subtitulo {
-  color: #aebdc4;
-  font-size: 11px;
   margin-top: 4px;
+  font-size: 11px;
+  color: var(--muted);
 }
 
 #sair {
-  background: #34434a;
-  color: white;
-  border: 0;
-  border-radius: 18px;
-  padding: 9px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 9px 17px;
+  border-radius: 25px;
 }
 
 /* LOGIN */
+
+.container {
+  height: calc(100dvh - 68px);
+  max-width: 1500px;
+  margin: auto;
+}
+
 .login {
+  max-width: 430px;
   width: calc(100% - 30px);
-  max-width: 420px;
-  margin: 65px auto;
-  background: var(--painel);
-  padding: 27px;
-  border-radius: 18px;
-  box-shadow: 0 8px 28px #0005;
+  margin: min(8vh,70px) auto 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 30px 25px;
+  border-radius: 22px;
   text-align: center;
+  box-shadow: 0 16px 55px #0003;
 }
 
 .login-logo {
-  margin: 0 auto 20px;
-  width: 75px;
-  height: 75px;
-  background: var(--verde);
-  color: #063329;
-  border-radius: 50%;
+  width: 76px;
+  height: 76px;
+  border-radius: 23px;
+  background: linear-gradient(135deg,#29e5b5,#007e65);
   display: grid;
   place-items: center;
-  font-size: 35px;
-  font-weight: bold;
+  color: #05382d;
+  font-size: 29px;
+  font-weight: 900;
+  margin: 0 auto 24px;
 }
 
 .login h2 {
-  font-size: 22px;
-  margin-bottom: 8px;
+  font-size: 24px;
+  margin: 0 0 10px;
 }
 
 .login p {
-  color: #aebdc4;
+  color: var(--muted);
   font-size: 14px;
   line-height: 1.6;
 }
 
 .login input {
-  display: block;
   width: 100%;
+  border: 1px solid #34444c;
+  background: var(--surface2);
+  color: var(--text);
+  border-radius: 12px;
   padding: 15px;
-  margin: 13px 0;
-  border: 1px solid #3b4a53;
-  background: #202c33;
-  color: white;
-  border-radius: 10px;
+  margin: 7px 0;
   outline: none;
-  font-size: 15px;
 }
 
-.login input:focus,
-.enviar input:focus {
-  border-color: var(--verde);
+.login input:focus {
+  border-color: var(--green);
 }
 
 .login button {
+  padding: 13px;
   border: 0;
-  padding: 13px 17px;
-  border-radius: 10px;
-  font-weight: bold;
-  margin: 4px;
-  background: var(--verde);
-  color: #042a20;
+  border-radius: 12px;
+  font-weight: 700;
 }
 
-.login .secundario {
-  background: #304047;
-  color: white;
+.botoes-login {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+#entrar {
+  flex: 1;
+  background: var(--green);
+  color: #05271f;
+}
+
+#cadastrar {
+  flex: 1;
+  background: var(--surface2);
+  color: var(--text);
 }
 
 #google {
   width: 100%;
-  margin: 15px 0 0;
+  margin-top: 14px;
+  background: #e9edef;
+  color: #202c33;
 }
 
 .aviso {
-  padding: 4px 12px;
-  color: #ffca76;
+  color: #ffcc82;
   font-size: 13px;
-  min-height: 18px;
+  padding: 5px 14px;
+  min-height: 22px;
 }
 
-/* APLICATIVO */
-.container {
-  max-width: 1450px;
-  margin: auto;
+.rodape-login {
+  margin-top: 24px;
+  color: var(--muted);
+  font-size: 12px;
 }
+
+/* ESTRUTURA DO APP */
 
 .app {
   display: grid;
-  grid-template-columns: 350px minmax(0,1fr);
-  height: calc(100dvh - 66px);
-  background: var(--fundo);
-  border-left: 1px solid var(--linha);
-  border-right: 1px solid var(--linha);
+  grid-template-columns: 370px minmax(0,1fr);
+  height: 100%;
+  min-height: 0;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
 }
 
-/* LISTA DE CONTATOS */
+/* LISTA DE CONVERSAS */
+
 aside {
-  background: var(--painel);
-  border-right: 1px solid var(--linha);
-  overflow-y: auto;
+  min-height: 0;
   min-width: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
 }
 
 .topo-contatos {
-  background: var(--painel);
-  padding: 22px 18px 14px;
-  position: sticky;
-  top: 0;
-  z-index: 2;
+  padding: 22px 20px 14px;
 }
 
 .topo-contatos h2 {
-  margin: 0 0 16px;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: -.7px;
+  margin: 0 0 17px;
 }
 
 .identidade {
+  background: var(--surface2);
+  color: var(--muted);
+  border-radius: 11px;
+  padding: 12px;
   font-size: 12px;
-  color: var(--cinza);
-  padding: 9px 12px;
-  background: #202c33;
-  border-radius: 9px;
   overflow-wrap: anywhere;
 }
 
-.titulo-lista {
-  padding: 16px 18px 8px;
-  color: var(--verde);
+.pesquisa {
+  padding: 8px 14px 12px;
+}
+
+.pesquisa input {
+  width: 100%;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  outline: none;
+  padding: 12px 16px;
+  background: var(--surface2);
+  color: var(--text);
+  border-radius: 12px;
+}
+
+.pesquisa input:focus {
+  border-bottom-color: var(--green);
+}
+
+.abas {
+  display: flex;
+  padding: 0 15px;
+  border-bottom: 1px solid var(--border);
+}
+
+.aba {
+  color: var(--green-light);
+  padding: 12px 8px;
   font-size: 13px;
-  font-weight: bold;
+  font-weight: 700;
+  border-bottom: 3px solid var(--green);
 }
 
 #contatos {
-  padding-bottom: 20px;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .contato {
   display: flex;
   align-items: center;
+  padding: 13px 16px;
   gap: 13px;
-  min-height: 76px;
-  padding: 12px 16px;
-  border-bottom: 1px solid #233038;
+  min-height: 78px;
+  border-bottom: 1px solid #ffffff0b;
   cursor: pointer;
+  transition: background .15s;
 }
 
-.contato:hover,
-.contato:focus {
-  background: #202c33;
-  outline: none;
+.contato:hover {
+  background: var(--hover);
 }
 
 .avatar {
   flex-shrink: 0;
-  width: 50px;
-  height: 50px;
+  width: 51px;
+  height: 51px;
+  background: linear-gradient(145deg,#318e78,#165547);
   border-radius: 50%;
   display: grid;
   place-items: center;
-  background: #285a51;
   color: white;
-  font-size: 21px;
-  font-weight: bold;
+  font-size: 18px;
+  font-weight: 700;
 }
 
 .contato-info {
-  min-width: 0;
   flex: 1;
+  min-width: 0;
 }
 
 .contato-nome {
-  color: var(--texto);
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .contato-sub {
-  color: var(--cinza);
   font-size: 12px;
+  color: var(--muted);
   margin-top: 6px;
 }
 
-.seta-contato {
-  color: var(--cinza);
-  font-size: 22px;
+.contato-seta {
+  color: var(--muted);
+  font-size: 20px;
 }
 
 /* CONVERSA */
+
 .conversa {
+  display: flex;
   min-width: 0;
   min-height: 0;
-  display: flex;
   flex-direction: column;
   background-color: #0b141a;
   background-image:
-    radial-gradient(#ffffff08 1px, transparent 1px);
-  background-size: 23px 23px;
+    radial-gradient(#ffffff07 1px,transparent 1px);
+  background-size: 26px 26px;
 }
 
 .barra-chat {
-  min-height: 65px;
-  background: #202c33;
+  background: var(--surface2);
+  height: 68px;
+  min-height: 68px;
   display: flex;
   align-items: center;
-  padding: 9px 15px;
+  padding: 0 17px;
   gap: 12px;
 }
 
 #voltar-chat {
+  display: none;
   background: transparent;
   border: 0;
-  color: white;
-  font-size: 26px;
-  display: none;
-  padding: 5px;
+  color: var(--text);
+  font-size: 27px;
+  padding: 7px;
 }
 
 .avatar-chat {
-  width: 42px;
-  height: 42px;
+  width: 43px;
+  height: 43px;
   flex-shrink: 0;
-  background: #285a51;
+  background: linear-gradient(135deg,#318e78,#165547);
   border-radius: 50%;
   display: grid;
   place-items: center;
-  color: white;
-  font-weight: bold;
-  font-size: 19px;
+  font-weight: 700;
 }
 
 .dados-chat {
@@ -342,126 +388,122 @@ aside {
 
 .titulo-chat {
   font-size: 16px;
-  font-weight: bold;
-  overflow: hidden;
+  font-weight: 650;
   white-space: nowrap;
+  overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .info-chat {
-  color: #aebdc4;
   font-size: 12px;
-  margin-top: 5px;
+  color: var(--muted);
+  margin-top: 4px;
 }
 
-/* MENSAGENS */
 .mensagens {
   flex: 1;
   min-height: 0;
-  overflow-y: auto;
-  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 7px;
+  gap: 8px;
+  overflow-y: auto;
+  padding: 22px 7%;
 }
 
 .bolha {
-  background: #202c33;
-  border-radius: 3px 13px 13px 13px;
-  padding: 10px 13px;
-  max-width: 78%;
+  background: var(--surface2);
+  color: var(--text);
+  max-width: 75%;
+  padding: 11px 14px;
+  border-radius: 4px 14px 14px 14px;
   align-self: flex-start;
-  word-break: break-word;
-  white-space: pre-wrap;
-  line-height: 1.5;
   font-size: 14px;
-  box-shadow: 0 1px 2px #0003;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  box-shadow: 0 2px 4px #0002;
 }
 
 .bolha.minha {
-  background: var(--bolha);
-  border-radius: 13px 3px 13px 13px;
+  background: var(--bubble);
+  border-radius: 14px 4px 14px 14px;
   align-self: flex-end;
 }
 
-/* DIGITAR MENSAGEM */
+/* CAMPO DE MENSAGEM */
+
 .enviar {
   display: flex;
   align-items: center;
-  background: #202c33;
-  padding: 10px 13px;
   gap: 10px;
+  padding: 11px 17px;
+  background: var(--surface2);
 }
 
 .enviar input {
   min-width: 0;
   flex: 1;
   background: #2a3942;
-  color: white;
+  color: var(--text);
   border: 1px solid transparent;
-  border-radius: 25px;
+  border-radius: 26px;
   padding: 14px 18px;
-  font-size: 15px;
   outline: none;
 }
 
-.enviar input::placeholder {
-  color: #aebdc4;
+.enviar input:focus {
+  border-color: #48766c;
 }
 
 .enviar button {
   flex-shrink: 0;
-  width: 49px;
-  height: 49px;
+  background: var(--green);
+  color: #042c22;
   border: 0;
   border-radius: 50%;
-  background: var(--verde);
-  color: #043326;
-  font-size: 23px;
+  width: 48px;
+  height: 48px;
   display: grid;
   place-items: center;
 }
 
 .enviar button:disabled {
-  opacity: .4;
+  opacity: .45;
 }
 
 #aviso-chat {
-  background: #202c33;
+  background: var(--surface2);
 }
 
-.rodape-login {
-  margin-top: 24px;
-  color: #73858d;
-  font-size: 12px;
-}
+/* VERSÃO CELULAR */
 
-/* CELULAR */
-@media(max-width: 700px) {
+@media(max-width:700px) {
   header {
-    height: 65px;
-    padding: 9px 13px;
+    height: 62px;
+    padding: 0 13px;
   }
 
-  h1 {
-    font-size: 19px;
+  .container {
+    height: calc(100dvh - 62px);
   }
 
   .logo {
-    height: 39px;
-    width: 39px;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
   }
+
+  h1 { font-size: 18px; }
 
   .app {
     display: block;
-    height: calc(100dvh - 65px);
     border: 0;
   }
 
   aside {
     width: 100%;
     height: 100%;
-    border-right: 0;
+    border: 0;
   }
 
   .conversa {
@@ -481,8 +523,12 @@ aside {
     display: block;
   }
 
+  .barra-chat {
+    padding: 0 9px;
+  }
+
   .mensagens {
-    padding: 14px 10px;
+    padding: 15px 11px;
   }
 
   .bolha {
@@ -491,16 +537,18 @@ aside {
 
   .enviar {
     gap: 7px;
-    padding: 8px;
+    padding: 9px;
+    padding-bottom: max(9px,env(safe-area-inset-bottom));
   }
 
   .enviar input {
-    padding: 13px;
     font-size: 16px;
   }
 
   .login {
-    margin: 25px auto;
+    margin: 24px auto;
+    max-height: calc(100% - 36px);
+    overflow-y: auto;
   }
 }
 </style>
@@ -526,16 +574,15 @@ aside {
 
 <div class="container">
 
-  <!-- TELA DE LOGIN -->
+  <!-- LOGIN -->
   <section id="login" class="login">
-
     <div class="login-logo">M+</div>
 
     <h2>Bem-vindo ao Mensagens Plus</h2>
 
     <p>
-      Converse com amigos e familiares.
-      Entre ou crie sua conta.
+      Conecte-se com quem importa.
+      Converse de forma simples e rápida.
     </p>
 
     <input
@@ -550,45 +597,46 @@ aside {
       placeholder="Sua senha"
       autocomplete="current-password">
 
-    <button id="entrar">
-      Entrar
-    </button>
+    <div class="botoes-login">
+      <button id="entrar">Entrar</button>
+      <button id="cadastrar">Criar conta</button>
+    </div>
 
-    <button id="cadastrar" class="secundario">
-      Criar conta
-    </button>
-
-    <button id="google" class="secundario">
+    <button id="google">
       Entrar com Google
     </button>
 
-    <div id="aviso-login"
-         class="aviso"
-         role="status"></div>
+    <div id="aviso-login" class="aviso" role="status"></div>
 
     <div class="rodape-login">
       Mensagens Plus © 2026
-      <br>
-      Parceira Vem Comigo Deus
+      <p>Parceira Vem Comigo Deus</p>
     </div>
-
   </section>
 
   <!-- APLICATIVO -->
   <section id="app" class="app oculto">
 
-    <!-- CONTATOS -->
-    <aside id="area-contatos">
+    <!-- LISTA DE CONTATOS -->
+    <aside>
 
       <div class="topo-contatos">
         <h2>Conversas</h2>
 
-        <div id="usuario-atual"
-             class="identidade"></div>
+        <div id="usuario-atual" class="identidade">
+        </div>
       </div>
 
-      <div class="titulo-lista">
-        CONTATOS
+      <div class="pesquisa">
+        <input
+          type="search"
+          id="buscar-contato"
+          placeholder="Pesquisar contato..."
+          aria-label="Pesquisar contato">
+      </div>
+
+      <div class="abas">
+        <div class="aba">Todos os contatos</div>
       </div>
 
       <div id="contatos">
@@ -597,83 +645,84 @@ aside {
 
     </aside>
 
-    <!-- JANELA DA CONVERSA -->
+    <!-- ÁREA DE CONVERSAS -->
     <div class="conversa">
 
       <div class="barra-chat">
 
-        <button
-          type="button"
-          id="voltar-chat"
-          aria-label="Voltar aos contatos">
+        <button id="voltar-chat"
+                type="button"
+                aria-label="Voltar aos contatos">
           &#8592;
         </button>
 
-        <div class="avatar-chat"
-             id="avatar-chat">
+        <div class="avatar-chat" id="avatar-chat">
           M+
         </div>
 
         <div class="dados-chat">
-
-          <div id="titulo-chat"
-               class="titulo-chat">
+          <div id="titulo-chat" class="titulo-chat">
             Selecione uma pessoa para conversar
           </div>
 
           <div class="info-chat">
             Mensagens Plus
           </div>
-
         </div>
-
       </div>
 
-      <div id="mensagens"
-           class="mensagens"
-           aria-live="polite">
+      <div
+        id="mensagens"
+        class="mensagens"
+        aria-live="polite">
       </div>
 
       <form id="form-enviar" class="enviar">
 
         <input
-          id="texto"
           type="text"
-          placeholder="Digite sua mensagem..."
+          id="texto"
           maxlength="3000"
+          placeholder="Digite sua mensagem..."
           autocomplete="off"
           disabled>
 
         <button
-          id="botao-enviar"
           type="submit"
+          id="botao-enviar"
           aria-label="Enviar mensagem"
           disabled>
-          &#10148;
-        </button>
 
+          <svg width="23" height="23"
+               viewBox="0 0 24 24"
+               fill="none"
+               stroke="currentColor"
+               stroke-width="2.2"
+               stroke-linecap="round"
+               stroke-linejoin="round">
+            <path d="m22 2-7 20-4-9-9-4Z"/>
+            <path d="M22 2 11 13"/>
+          </svg>
+
+        </button>
       </form>
 
-      <div id="aviso-chat"
-           class="aviso"
-           role="status"></div>
-
+      <div id="aviso-chat" class="aviso" role="status"></div>
     </div>
 
   </section>
-
 </div>
 
-<!-- MOTOR DE MENSAGENS -->
+<!-- FIREBASE E MENSAGENS -->
 <script type="module" src="./app.js"></script>
 
-<!-- NAVEGAÇÃO VISUAL DO CELULAR -->
+<!-- MELHORIAS DA INTERFACE -->
 <script>
-(function() {
+(() => {
   const app = document.getElementById("app");
   const contatos = document.getElementById("contatos");
+  const busca = document.getElementById("buscar-contato");
   const voltar = document.getElementById("voltar-chat");
-  const titulo = document.getElementById("titulo-chat");
   const avatarChat = document.getElementById("avatar-chat");
 
   function iniciais(nome) {
@@ -681,19 +730,26 @@ aside {
       .trim()
       .split(/\s+/)
       .slice(0, 2)
-      .map(parte => parte.charAt(0))
+      .map(p => p.charAt(0))
       .join("")
       .toUpperCase();
   }
 
-  function decorarContatos() {
-    contatos.querySelectorAll(".contato").forEach(item => {
-      if (item.dataset.visualPronto) return;
+  // Apenas melhora a apresentação.
+  // Não altera o código Firebase.
+
+  function organizarContatos() {
+    const itens = contatos.querySelectorAll(".contato");
+
+    itens.forEach(item => {
+      if (item.dataset.pronto === "sim") return;
 
       const nome = item.textContent.trim();
 
-      item.dataset.visualPronto = "1";
-      item.textContent = "";
+      item.dataset.pronto = "sim";
+      item.dataset.nome = nome.toLowerCase();
+
+      item.replaceChildren();
 
       const avatar = document.createElement("div");
       avatar.className = "avatar";
@@ -702,37 +758,51 @@ aside {
       const info = document.createElement("div");
       info.className = "contato-info";
 
-      const textoNome = document.createElement("div");
-      textoNome.className = "contato-nome";
-      textoNome.textContent = nome;
+      const titulo = document.createElement("div");
+      titulo.className = "contato-nome";
+      titulo.textContent = nome;
 
       const subtitulo = document.createElement("div");
       subtitulo.className = "contato-sub";
       subtitulo.textContent = "Toque para conversar";
 
-      const seta = document.createElement("div");
-      seta.className = "seta-contato";
+      const seta = document.createElement("span");
+      seta.className = "contato-seta";
       seta.textContent = "›";
 
-      info.append(textoNome, subtitulo);
+      info.append(titulo, subtitulo);
       item.append(avatar, info, seta);
+    });
+
+    filtrarContatos();
+  }
+
+  function filtrarContatos() {
+    const texto = busca.value.toLowerCase().trim();
+
+    contatos.querySelectorAll(".contato").forEach(item => {
+      const nome = item.dataset.nome || "";
+      item.style.display = nome.includes(texto) ? "" : "none";
     });
   }
 
-  const observador = new MutationObserver(decorarContatos);
+  busca.addEventListener("input", filtrarContatos);
+
+  const observador = new MutationObserver(organizarContatos);
 
   observador.observe(contatos, {
     childList: true
   });
 
-  decorarContatos();
+  organizarContatos();
 
+  // Navegação no celular.
   contatos.addEventListener("click", evento => {
-    const contato = evento.target.closest(".contato");
+    const item = evento.target.closest(".contato");
 
-    if (!contato) return;
+    if (!item) return;
 
-    const nome = contato.querySelector(".contato-nome")
+    const nome = item.querySelector(".contato-nome")
       ?.textContent || "Contato";
 
     avatarChat.textContent = iniciais(nome);
@@ -740,11 +810,8 @@ aside {
   });
 
   contatos.addEventListener("keydown", evento => {
-    if (evento.key !== "Enter") return;
-
-    const contato = evento.target.closest(".contato");
-
-    if (contato) {
+    if (evento.key === "Enter" &&
+        evento.target.closest(".contato")) {
       app.classList.add("chat-aberto");
     }
   });
@@ -753,14 +820,14 @@ aside {
     app.classList.remove("chat-aberto");
   });
 
-  // Ao sair da conta, mostrar lista novamente
-  const observarSessao = new MutationObserver(() => {
+  // Voltar à lista ao encerrar a sessão.
+  const sessao = new MutationObserver(() => {
     if (app.classList.contains("oculto")) {
       app.classList.remove("chat-aberto");
     }
   });
 
-  observarSessao.observe(app, {
+  sessao.observe(app, {
     attributes: true,
     attributeFilter: ["class"]
   });
