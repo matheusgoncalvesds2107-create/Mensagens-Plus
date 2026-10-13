@@ -1,410 +1,26 @@
+const SERVIDOR_NOTIFICACOES =
+  "https://mensagens-plus-notificacoes.onrender.com";
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-
-import {
-  getAuth,
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signOut
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-
-import {
-  getFirestore,
-  collection,
-  doc,
-  setDoc,
-  addDoc,
-  getDoc,
-  onSnapshot,
-  query,
-  orderBy,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-
-import { firebaseConfig } from "./firebase-config.js";
-
-// INICIAR FIREBASE
-const firebaseApp = initializeApp(firebaseConfig);
-const auth = getAuth(firebaseApp);
-const db = getFirestore(firebaseApp);
-
-const el = id => document.getElementById(id);
-
-let usuario = null;
-let conversaAtual = null;
-let pararContatos = null;
-let pararMensagens = null;
-let versaoConversa = 0;
-
-// MENSAGENS DE AVISO
-function aviso(id, mensagem) {
-  el(id).textContent = mensagem;
-}
-
-function mostrarErro(id, erro) {
-  console.error("Mensagens Plus:", erro);
-
-  const traducoes = {
-    "auth/invalid-credential":
-      "E-mail ou senha incorretos.",
-
-    "auth/email-already-in-use":
-      "Este e-mail já está cadastrado.",
-
-    "auth/weak-password":
-      "A senha precisa ter pelo menos 6 caracteres.",
-
-    "auth/unauthorized-domain":
-      "Autorize este domínio no Firebase.",
-
-    "auth/popup-closed-by-user":
-      "Login com Google cancelado.",
-
-    "permission-denied":
-      "Permissão negada pelo Firestore. Verifique as regras.",
-
-    "unavailable":
-      "Não foi possível conectar. Confira a internet."
-  };
-
-  aviso(
-    id,
-    traducoes[erro.code] ||
-    erro.message ||
-    "Ocorreu um erro."
-  );
-}
-
-// CRIAR CONTA
-el("cadastrar").onclick = async () => {
-  try {
-    aviso("aviso-login", "Criando sua conta...");
-
-    await createUserWithEmailAndPassword(
-      auth,
-      el("email").value.trim(),
-      el("senha").value
-    );
-
-    aviso("aviso-login", "");
-  } catch (erro) {
-    mostrarErro("aviso-login", erro);
-  }
-};
-
-// ENTRAR COM E-MAIL
-el("entrar").onclick = async () => {
-  try {
-    aviso("aviso-login", "Entrando...");
-
-    await signInWithEmailAndPassword(
-      auth,
-      el("email").value.trim(),
-      el("senha").value
-    );
-
-    aviso("aviso-login", "");
-  } catch (erro) {
-    mostrarErro("aviso-login", erro);
-  }
-};
-
-// ENTRAR COM GOOGLE
-el("google").onclick = async () => {
-  try {
-    aviso("aviso-login", "Abrindo Google...");
-
-    await signInWithPopup(
-      auth,
-      new GoogleAuthProvider()
-    );
-
-    aviso("aviso-login", "");
-  } catch (erro) {
-    mostrarErro("aviso-login", erro);
-  }
-};
-
-// SAIR DA CONTA
-el("sair").onclick = async () => {
-  try {
-    await signOut(auth);
-  } catch (erro) {
-    mostrarErro("aviso-chat", erro);
-  }
-};
-
-// MONITORAR LOGIN
-onAuthStateChanged(auth, async user => {
-  pararContatos?.();
-  pararMensagens?.();
-
-  pararContatos = null;
-  pararMensagens = null;
-
-  versaoConversa++;
-  conversaAtual = null;
-  usuario = user;
-
-  el("login").classList.toggle("oculto", !!user);
-  el("app").classList.toggle("oculto", !user);
-  el("sair").classList.toggle("oculto", !user);
-
-  if (!user) return;
-
-  el("texto").disabled = true;
-  el("botao-enviar").disabled = true;
-
-  el("mensagens").replaceChildren();
-
-  el("titulo-chat").textContent =
-    "Selecione uma pessoa para conversar";
-
-  aviso("aviso-chat", "");
-
-  const nome =
-    user.displayName ||
-    user.email?.split("@")[0] ||
-    "Usuário";
-
-  el("usuario-atual").textContent = nome;
-
-  try {
-    // SALVAR PERFIL DO USUÁRIO
-    await setDoc(
-      doc(db, "users", user.uid),
-      {
-        uid: user.uid,
-        displayName: nome,
-        email: user.email || ""
-      },
-      { merge: true }
-    );
-
-    if (auth.currentUser?.uid !== user.uid) return;
-
-    // CARREGAR CONTATOS
-    pararContatos = onSnapshot(
-      collection(db, "users"),
-
-      resultado => {
-        const lista = el("contatos");
-        lista.replaceChildren();
-
-        const pessoas = resultado.docs.filter(
-          pessoa => pessoa.id !== user.uid
-        );
-
-        if (!pessoas.length) {
-          lista.textContent =
-            "Nenhum outro usuário cadastrado ainda.";
-          return;
-        }
-
-        pessoas.forEach(pessoa => {
-          const dados = pessoa.data();
-
-          const item = document.createElement("div");
-
-          item.className = "contato";
-          item.textContent =
-            dados.displayName || "Usuário";
-
-          item.setAttribute("role", "button");
-          item.tabIndex = 0;
-
-          item.onclick = () => abrirConversa(
-            pessoa.id,
-            dados.displayName || "Usuário"
-          );
-
-          item.onkeydown = evento => {
-            if (evento.key === "Enter") {
-              item.click();
-            }
-          };
-
-          lista.appendChild(item);
-        });
-      },
-
-      erro => mostrarErro("aviso-chat", erro)
-    );
-
-  } catch (erro) {
-    mostrarErro("aviso-chat", erro);
-  }
-});
-
-// ABRIR CONVERSA COM CONTATO
-async function abrirConversa(outroUsuarioId, nome) {
-  if (!usuario) return;
-
-  pararMensagens?.();
-  pararMensagens = null;
-
-  const minhaVersao = ++versaoConversa;
-  const meuId = usuario.uid;
-
-  const participantes = [
-    meuId,
-    outroUsuarioId
-  ].sort();
-
-  const chatId = participantes.join("_");
-
-  conversaAtual = chatId;
-
-  el("titulo-chat").textContent = nome;
-  el("mensagens").replaceChildren();
-
-  aviso("aviso-chat", "Abrindo conversa...");
-
-  el("texto").disabled = true;
-  el("botao-enviar").disabled = true;
-
-  try {
-    const referencia = doc(db, "chats", chatId);
-
-    // CRIAR OU ABRIR CONVERSA EXISTENTE
-    try {
-      await setDoc(referencia, {
-        type: "direct",
-        members: participantes
-      });
-    } catch (erro) {
-      if (erro.code !== "permission-denied") {
-        throw erro;
-      }
-
-      // O chat pode já existir, e nossas regras
-      // impedem alterar conversas existentes.
-      const existente = await getDoc(referencia);
-
-      if (!existente.exists()) {
-        throw erro;
-      }
-
-      const dados = existente.data();
-
-      if (
-        !Array.isArray(dados.members) ||
-        !dados.members.includes(meuId) ||
-        !dados.members.includes(outroUsuarioId)
-      ) {
-        throw new Error(
-          "Você não participa desta conversa."
-        );
-      }
-    }
-
-    if (
-      minhaVersao !== versaoConversa ||
-      auth.currentUser?.uid !== meuId
-    ) {
-      return;
-    }
-
-    // LIBERAR CAMPO PARA DIGITAR
-    el("texto").disabled = false;
-    el("botao-enviar").disabled = false;
-
-    el("texto").placeholder =
-      "Digite sua mensagem...";
-
-    aviso("aviso-chat", "");
-
-    // ESCUTAR MENSAGENS EM TEMPO REAL
-    const consulta = query(
-      collection(
-        db,
-        "chats",
-        chatId,
-        "messages"
-      ),
-      orderBy("createdAt", "asc")
-    );
-
-    pararMensagens = onSnapshot(
-      consulta,
-
-      resultado => {
-        if (minhaVersao !== versaoConversa) {
-          return;
-        }
-
-        const lista = el("mensagens");
-        lista.replaceChildren();
-
-        resultado.forEach(documento => {
-          const mensagem = documento.data();
-
-          const bolha = document.createElement("div");
-
-          bolha.className = "bolha";
-
-          if (mensagem.senderId === meuId) {
-            bolha.classList.add("minha");
-          }
-
-          bolha.textContent =
-            mensagem.text || "";
-
-          lista.appendChild(bolha);
-        });
-
-        lista.scrollTop = lista.scrollHeight;
-
-        aviso("aviso-chat", "");
-      },
-
-      erro => {
-        if (minhaVersao === versaoConversa) {
-          mostrarErro("aviso-chat", erro);
-        }
-      }
-    );
-
-  } catch (erro) {
-    if (minhaVersao === versaoConversa) {
-      el("texto").disabled = true;
-      el("botao-enviar").disabled = true;
-
-      mostrarErro("aviso-chat", erro);
-    }
-  }
-}
-
-// ENVIAR MENSAGEM
+// ENVIAR MENSAGEM E SOLICITAR NOTIFICAÇÃO
 el("form-enviar").onsubmit = async evento => {
   evento.preventDefault();
 
   const texto = el("texto").value.trim();
+  const user = auth.currentUser;
 
-  if (
-    !usuario ||
-    !conversaAtual ||
-    !texto
-  ) {
+  if (!user || !conversaAtual || !texto) {
     return;
   }
 
   const chatId = conversaAtual;
-  const remetente = usuario.uid;
+  const remetente = user.uid;
 
   el("botao-enviar").disabled = true;
 
   try {
-    await addDoc(
-      collection(
-        db,
-        "chats",
-        chatId,
-        "messages"
-      ),
+    // 1. SALVAR MENSAGEM NO FIREBASE
+    const mensagemSalva = await addDoc(
+      collection(db, "chats", chatId, "messages"),
       {
         text: texto,
         senderId: remetente,
@@ -418,11 +34,53 @@ el("form-enviar").onsubmit = async evento => {
 
     aviso("aviso-chat", "");
 
+    // 2. ENVIAR AVISO PARA O SERVIDOR
+    try {
+      const token = await user.getIdToken();
+
+      const resposta = await fetch(
+        SERVIDOR_NOTIFICACOES + "/api/notify",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({
+            chatId: chatId,
+            messageId: mensagemSalva.id
+          })
+        }
+      );
+
+      if (!resposta.ok) {
+        throw new Error(
+          "Servidor respondeu " + resposta.status
+        );
+      }
+
+      const resultado = await resposta.json();
+
+      console.log(
+        "Notificação Mensagens Plus:",
+        resultado
+      );
+
+    } catch (erroNotificacao) {
+      console.warn(
+        "Mensagem salva, mas notificação falhou:",
+        erroNotificacao
+      );
+    }
+
   } catch (erro) {
     mostrarErro("aviso-chat", erro);
 
   } finally {
-    if (conversaAtual === chatId) {
+    if (
+      conversaAtual === chatId &&
+      auth.currentUser?.uid === remetente
+    ) {
       el("botao-enviar").disabled = false;
     }
   }
