@@ -322,6 +322,7 @@ onAuthStateChanged(auth, async user => {
           const item = document.createElement("div");
 
           item.className = "contato";
+          item.dataset.uid = pessoa.id;
           item.textContent = nome;
 
           item.setAttribute(
