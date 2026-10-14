@@ -482,9 +482,21 @@ async function abrirConversa(outroUsuarioId, nome) {
         resultado.forEach(documento => {
           const mensagem = documento.data();
 
-          const bolha = document.createElement("div");
+          
+const bolha = document.createElement("div");
 
-          bolha.className = "bolha";
+bolha.className = "bolha";
+
+// Identificar cada mensagem e sua conversa
+bolha.dataset.messageId = documento.id;
+bolha.dataset.chatId = chatId;
+
+// Identificar mensagens de voz
+if (mensagem.type === "audio" && mensagem.audio) {
+  bolha.dataset.tipo = "audio";
+  bolha.dataset.duracao = mensagem.audio.seconds || 0;
+}
+
 
           if (mensagem.senderId === meuId) {
             bolha.classList.add("minha");
