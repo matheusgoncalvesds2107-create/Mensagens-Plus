@@ -1019,18 +1019,33 @@ async function atender() {
                 }
               });
             },
-            erro => console.warn(
-              "Ligações recebidas:",
-              erro.message
-            )
+           
+   erro => {
+  console.error("Ligações recebidas:", erro);
+
+  alert(
+    "Mensagens Plus - Erro nas chamadas recebidas\n" +
+    "Código: " + (erro.code || "desconhecido") +
+    "\nDetalhes: " + erro.message
+  );
+}
+
           );
 
           pararChamadas.push(parar);
         });
       },
-      erro => {
-        console.error("Lista de conversas:", erro);
-      }
+      
+erro => {
+  console.error("Lista de conversas:", erro);
+
+  alert(
+    "Mensagens Plus - Erro ao monitorar conversas\n" +
+    "Código: " + (erro.code || "desconhecido") +
+    "\nDetalhes: " + erro.message
+  );
+}
+
     );
   }
 
