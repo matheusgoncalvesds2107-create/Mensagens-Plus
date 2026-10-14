@@ -957,55 +957,6 @@ async function atender() {
     aceitar.botao.disabled = false;
   }
 }
-
-      chamada?.papel !== "callee" ||
-      iniciando
-    ) return;
-
-    iniciando = true;
-    aceitar.botao.disabled = true;
-
-    const atual = chamada;
-
-    status.textContent = "Conectando...";
-
-    try {
-      await prepararConexao();
-
-      await conexao.setRemoteDescription(
-        new RTCSessionDescription(atual.offer)
-      );
-
-      monitorarCandidatos(atual.ref);
-
-      const answer = await conexao.createAnswer();
-      await conexao.setLocalDescription(answer);
-
-      await updateDoc(atual.ref, {
-        status: "accepted",
-        answer: {
-          type: "answer",
-          sdp: conexao.localDescription.sdp
-        },
-        updatedAt: serverTimestamp()
-      });
-
-      await liberarCandidatosLocais();
-      await aplicarCandidatosRemotos();
-
-      atualizarBotoes(false);
-      status.textContent = "Conectando áudio...";
-
-    } catch (erro) {
-      console.error("Erro ao atender:", erro);
-      alert("Não foi possível atender: " + erro.message);
-      await encerrar("declined");
-    } finally {
-      iniciando = false;
-      aceitar.botao.disabled = false;
-    }
-  }
-
   // =====================================
   // OUVIR CHAMADAS NOVAS
   // =====================================
