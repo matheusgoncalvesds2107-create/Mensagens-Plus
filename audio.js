@@ -1,9 +1,8 @@
-
 /*
- * Mensagens Plus
- * Gravador de voz — primeira etapa
- * Gravação e reprodução local
- */
+  MENSAGENS PLUS
+  Parceira Vem Comigo Deus
+  Gravador compacto de voz
+*/
 
 (() => {
   const form = document.getElementById("form-enviar");
@@ -15,9 +14,9 @@
 
   estilo.textContent = `
     .mp-mic {
-      width: 47px;
-      height: 47px;
-      min-width: 47px;
+      width: 46px;
+      height: 46px;
+      min-width: 46px;
       border: 0;
       border-radius: 50%;
       background: #00a884;
@@ -25,132 +24,219 @@
       display: grid;
       place-items: center;
       cursor: pointer;
-      font-size: 22px;
     }
 
     .mp-mic:disabled {
       opacity: .45;
+      cursor: default;
+    }
+
+    .mp-mic svg {
+      width: 23px;
+      height: 23px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
     .mp-mic.gravando {
-      background: #dc3545;
-      animation: mp-pulsar 1s infinite;
+      background: #e53955;
+      animation: mp-pulse 1s infinite;
     }
 
-    @keyframes mp-pulsar {
-      50% { opacity: .6; }
+    @keyframes mp-pulse {
+      50% { opacity: .65; }
     }
 
-    .mp-audio-painel {
-      position: fixed;
-      bottom: 80px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: calc(100% - 24px);
-      max-width: 420px;
+    .mp-voz {
       background: #202c33;
-      color: white;
-      padding: 18px;
-      border-radius: 18px;
-      z-index: 1000;
-      box-shadow: 0 8px 30px #0007;
-    }
-
-    .mp-audio-painel[hidden] {
-      display: none;
-    }
-
-    .mp-audio-painel audio {
-      width: 100%;
-      margin: 12px 0;
-    }
-
-    .mp-audio-acoes {
+      color: #e9edef;
+      padding: 12px;
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
+      gap: 10px;
+      border-top: 1px solid #33434c;
+    }
+
+    .mp-voz[hidden] {
+      display: none !important;
+    }
+
+    .mp-voz-linha {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mp-ponto {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff4963;
+      animation: mp-pulse 1s infinite;
+    }
+
+    .mp-tempo {
+      font-size: 14px;
+      font-variant-numeric: tabular-nums;
+      min-width: 40px;
+    }
+
+    .mp-status {
+      flex: 1;
+      font-size: 13px;
+      color: #c2cdd2;
+    }
+
+    .mp-voz audio {
+      width: 100%;
+      height: 43px;
+    }
+
+    .mp-acoes {
+      display: flex;
       gap: 9px;
     }
 
-    .mp-audio-acoes button {
+    .mp-acoes button {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .mp-descartar {
+      background: #45515a;
+      color: white;
+    }
+
+    .mp-parar {
       background: #00a884;
       color: white;
-      border: 0;
-      padding: 11px;
-      border-radius: 10px;
-      font-weight: bold;
       flex: 1;
     }
 
-    .mp-audio-acoes .excluir {
-      background: #65404a;
+    .mp-acoes button[hidden] {
+      display: none;
     }
 
-    .mp-audio-status {
-      font-size: 13px;
-      color: #d0dde0;
-      margin-top: 8px;
+    .mp-informacao {
+      font-size: 12px;
+      color: #b5c3c9;
+      line-height: 1.4;
     }
   `;
 
-  document.head.append(estilo);
+  document.head.appendChild(estilo);
 
-  const botao = document.createElement("button");
-  botao.type = "button";
-  botao.className = "mp-mic";
-  botao.textContent = "🎙";
-  botao.title = "Gravar áudio";
-  botao.setAttribute("aria-label", "Gravar áudio");
+  // BOTAO DE MICROFONE
+  const mic = document.createElement("button");
 
-  form.append(botao);
+  mic.type = "button";
+  mic.className = "mp-mic";
+  mic.title = "Gravar mensagem de voz";
+  mic.setAttribute("aria-label", "Gravar voz");
 
+  mic.innerHTML = `
+    <svg viewBox="0 0 24 24">
+      <rect x="9" y="2" width="6" height="13" rx="3"/>
+      <path d="M5 10a7 7 0 0 0 14 0"/>
+      <path d="M12 17v5"/>
+      <path d="M8 22h8"/>
+    </svg>
+  `;
+
+  form.appendChild(mic);
+
+  // BARRA COMPACTA DE AUDIO
   const painel = document.createElement("div");
-  painel.className = "mp-audio-painel";
+  painel.className = "mp-voz";
   painel.hidden = true;
 
-  const titulo = document.createElement("strong");
-  titulo.textContent = "Mensagem de voz";
+  const linha = document.createElement("div");
+  linha.className = "mp-voz-linha";
 
-  const status = document.createElement("div");
-  status.className = "mp-audio-status";
+  const ponto = document.createElement("span");
+  ponto.className = "mp-ponto";
+
+  const tempo = document.createElement("span");
+  tempo.className = "mp-tempo";
+  tempo.textContent = "00:00";
+
+  const status = document.createElement("span");
+  status.className = "mp-status";
+  status.textContent = "Gravando áudio...";
+
+  linha.append(ponto, tempo, status);
 
   const player = document.createElement("audio");
   player.controls = true;
+  player.preload = "metadata";
   player.hidden = true;
 
   const acoes = document.createElement("div");
-  acoes.className = "mp-audio-acoes";
+  acoes.className = "mp-acoes";
+
+  const descartar = document.createElement("button");
+  descartar.type = "button";
+  descartar.className = "mp-descartar";
+  descartar.textContent = "Descartar";
 
   const parar = document.createElement("button");
   parar.type = "button";
+  parar.className = "mp-parar";
   parar.textContent = "Parar gravação";
 
-  const salvar = document.createElement("button");
-  salvar.type = "button";
-  salvar.textContent = "Salvar teste";
-  salvar.hidden = true;
+  const informacao = document.createElement("div");
+  informacao.className = "mp-informacao";
+  informacao.hidden = true;
 
-  const excluir = document.createElement("button");
-  excluir.type = "button";
-  excluir.className = "excluir";
-  excluir.textContent = "Descartar";
+  acoes.append(descartar, parar);
+  painel.append(linha, player, acoes, informacao);
 
-  acoes.append(parar, salvar, excluir);
-  painel.append(titulo, status, player, acoes);
-  document.body.append(painel);
+  // FICA LOGO ACIMA DO CAMPO DE MENSAGEM
+  form.parentElement.insertBefore(painel, form);
 
   let gravador = null;
   let fluxo = null;
   let partes = [];
   let urlAudio = null;
-  let tipoAudio = "";
-  let descartando = false;
+  let temporizador = null;
+  let inicio = 0;
+  let descartado = false;
+  let iniciando = false;
 
-  function limparFluxo() {
+  function atualizarTempo() {
+    const segundos = Math.floor(
+      (Date.now() - inicio) / 1000
+    );
+
+    const minutos = Math.floor(segundos / 60);
+    const resto = segundos % 60;
+
+    tempo.textContent =
+      String(minutos).padStart(2, "0") +
+      ":" +
+      String(resto).padStart(2, "0");
+
+    // LIMITE DE DOIS MINUTOS
+    if (
+      segundos >= 120 &&
+      gravador?.state === "recording"
+    ) {
+      gravador.stop();
+    }
+  }
+
+  function liberarMicrofone() {
     fluxo?.getTracks().forEach(track => track.stop());
     fluxo = null;
   }
 
-  function limparAudio() {
+  function limparPlayer() {
     player.pause();
     player.removeAttribute("src");
     player.load();
@@ -161,54 +247,109 @@
     }
 
     player.hidden = true;
-    salvar.hidden = true;
+  }
+
+  function pararRelogio() {
+    if (temporizador !== null) {
+      clearInterval(temporizador);
+      temporizador = null;
+    }
   }
 
   function fechar() {
-    descartando = true;
+    descartado = true;
+
+    pararRelogio();
 
     if (gravador?.state === "recording") {
       gravador.stop();
     }
 
-    limparFluxo();
-    limparAudio();
+    liberarMicrofone();
+    limparPlayer();
 
+    partes = [];
     painel.hidden = true;
-    botao.classList.remove("gravando");
+    mic.classList.remove("gravando");
+
+    status.textContent = "";
+    tempo.textContent = "00:00";
   }
 
-  async function gravar() {
-    if (campo.disabled) {
+  function prontoParaOuvir() {
+    pararRelogio();
+    liberarMicrofone();
+
+    mic.classList.remove("gravando");
+
+    if (descartado) return;
+
+    const tipo = gravador?.mimeType || "audio/webm";
+
+    const blob = new Blob(partes, {
+      type: tipo
+    });
+
+    if (!blob.size) {
+      status.textContent = "Gravação vazia.";
+      parar.hidden = true;
       return;
     }
 
-    if (!navigator.mediaDevices?.getUserMedia ||
-        typeof MediaRecorder === "undefined") {
-      alert("Este navegador não suporta gravação de áudio.");
+    urlAudio = URL.createObjectURL(blob);
+
+    player.src = urlAudio;
+    player.hidden = false;
+    player.load();
+
+    ponto.style.display = "none";
+    parar.hidden = true;
+
+    status.textContent = "Ouça sua gravação";
+
+    informacao.hidden = false;
+    informacao.textContent =
+      "Prévia de áudio. O envio ao contato será ativado na próxima etapa.";
+  }
+
+  async function iniciarGravacao() {
+    if (campo.disabled || iniciando) return;
+
+    if (
+      !navigator.mediaDevices?.getUserMedia ||
+      typeof MediaRecorder === "undefined"
+    ) {
+      alert(
+        "Seu navegador não suporta gravação de voz."
+      );
       return;
     }
+
+    iniciando = true;
 
     try {
-      limparAudio();
-      descartando = false;
+      fechar();
+
+      descartado = false;
       partes = [];
 
       fluxo = await navigator.mediaDevices.getUserMedia({
         audio: true
       });
 
-      tipoAudio = [
+      const formatos = [
         "audio/webm;codecs=opus",
         "audio/webm",
         "audio/mp4"
-      ].find(tipo => MediaRecorder.isTypeSupported(tipo)) || "";
+      ];
 
-      gravador = tipoAudio
-        ? new MediaRecorder(fluxo, { mimeType: tipoAudio })
+      const formato = formatos.find(
+        tipo => MediaRecorder.isTypeSupported(tipo)
+      );
+
+      gravador = formato
+        ? new MediaRecorder(fluxo, { mimeType: formato })
         : new MediaRecorder(fluxo);
-
-      tipoAudio = gravador.mimeType;
 
       gravador.ondataavailable = evento => {
         if (evento.data.size > 0) {
@@ -216,54 +357,57 @@
         }
       };
 
-      gravador.onstop = () => {
-        limparFluxo();
-        botao.classList.remove("gravando");
+      gravador.onstop = prontoParaOuvir;
 
-        if (descartando) return;
-
-        const arquivo = new Blob(partes, {
-          type: tipoAudio || "audio/webm"
-        });
-
-        if (!arquivo.size) {
-          status.textContent = "Não foi possível gravar áudio.";
-          return;
-        }
-
-        urlAudio = URL.createObjectURL(arquivo);
-        player.src = urlAudio;
-        player.hidden = false;
-        salvar.hidden = false;
-        parar.hidden = true;
-
-        status.textContent =
-          "Gravação pronta! Ouça antes de salvar.";
+      gravador.onerror = () => {
+        status.textContent = "Erro na gravação.";
+        liberarMicrofone();
+        pararRelogio();
+        mic.classList.remove("gravando");
       };
+
+      painel.hidden = false;
+      player.hidden = true;
+      parar.hidden = false;
+      ponto.style.display = "";
+
+      informacao.hidden = true;
+      status.textContent = "Gravando sua voz...";
+      tempo.textContent = "00:00";
 
       gravador.start();
 
-      painel.hidden = false;
-      parar.hidden = false;
-      salvar.hidden = true;
+      inicio = Date.now();
 
-      status.textContent =
-        "Gravando... toque em Parar gravação.";
+      temporizador = setInterval(
+        atualizarTempo,
+        500
+      );
 
-      botao.classList.add("gravando");
+      mic.classList.add("gravando");
 
     } catch (erro) {
-      limparFluxo();
+      console.error("Mensagens Plus áudio:", erro);
 
-      status.textContent = "Microfone indisponível.";
+      fechar();
+
       alert(
         "Não foi possível acessar o microfone. " +
-        "Confira a permissão do Chrome."
+        "Verifique a permissão do navegador."
       );
+
+    } finally {
+      iniciando = false;
     }
   }
 
-  botao.onclick = gravar;
+  mic.onclick = () => {
+    if (gravador?.state === "recording") {
+      gravador.stop();
+    } else {
+      iniciarGravacao();
+    }
+  };
 
   parar.onclick = () => {
     if (gravador?.state === "recording") {
@@ -271,21 +415,24 @@
     }
   };
 
-  excluir.onclick = fechar;
+  descartar.onclick = fechar;
 
-  salvar.onclick = () => {
-    if (!urlAudio) return;
+  // NAO PERMITIR GRAVAR FORA DE CONVERSA
+  function verificarConversa() {
+    mic.disabled = campo.disabled;
 
-    const extensao = tipoAudio.includes("mp4")
-      ? "m4a"
-      : "webm";
+    if (
+      campo.disabled &&
+      !painel.hidden
+    ) {
+      fechar();
+    }
+  }
 
-    const link = document.createElement("a");
-    link.href = urlAudio;
-    link.download = "mensagem-de-voz." + extensao;
-    link.click();
+  new MutationObserver(verificarConversa).observe(
+    campo,
+    { attributes: true, attributeFilter: ["disabled"] }
+  );
 
-    status.textContent =
-      "Áudio salvo no celular para teste.";
-  };
+  verificarConversa();
 })();
