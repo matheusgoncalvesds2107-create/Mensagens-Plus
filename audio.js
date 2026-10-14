@@ -1,8 +1,12 @@
 
 /*
- MENSAGENS PLUS
- Gravador compacto estilo WhatsApp
- Render + Cloudinary
+  MENSAGENS PLUS
+  Parceira Vem Comigo Deus
+
+  Gravador compacto
+  Ícones profissionais
+  Render + Cloudinary
+  Um áudio tocando por vez
 */
 
 (() => {
@@ -13,88 +17,197 @@
   const campo = document.getElementById("texto");
   const lista = document.getElementById("mensagens");
   const contatos = document.getElementById("contatos");
-  const enviarTexto = document.getElementById("botao-enviar");
+  const botaoTexto = document.getElementById("botao-enviar");
 
-  if (!form || !campo || !lista || !contatos || !enviarTexto) return;
+  if (!form || !campo || !lista ||
+      !contatos || !botaoTexto) return;
+
+  // =====================================
+  // ÍCONES
+  // =====================================
+
+  const icones = {
+    microfone: `
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <rect x="9" y="2" width="6" height="13" rx="3"/>
+        <path d="M5 10a7 7 0 0 0 14 0"/>
+        <path d="M12 17v5"/>
+        <path d="M8 22h8"/>
+      </svg>
+    `,
+    lixeira: `
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 6h18"/>
+        <path d="M8 6V4h8v2"/>
+        <path d="M5 6l1 15h12l1-15"/>
+        <path d="M10 10v7"/>
+        <path d="M14 10v7"/>
+      </svg>
+    `,
+    pausar: `
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <rect x="6" y="4" width="4" height="16" rx="1"/>
+        <rect x="14" y="4" width="4" height="16" rx="1"/>
+      </svg>
+    `,
+    tocar: `
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M7 4l14 8-14 8z"/>
+      </svg>
+    `,
+    enviar: `
+      <svg viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 2L11 13"/>
+        <path d="M22 2L15 22l-4-9-9-4z"/>
+      </svg>
+    `
+  };
 
   const criar = (tag, classe, texto = "") => {
-    const e = document.createElement(tag);
-    e.className = classe;
-    e.textContent = texto;
-    return e;
+    const elemento = document.createElement(tag);
+    elemento.className = classe;
+    elemento.textContent = texto;
+    return elemento;
   };
+
+  function iconeNo(botao, nome) {
+    botao.innerHTML = icones[nome];
+  }
+
+  // =====================================
+  // ESTILO
+  // =====================================
 
   const estilo = document.createElement("style");
 
   estilo.textContent = `
+    .mp-mic,
+    .mp-gravacao button,
+    .mp-play {
+      display:grid;
+      place-items:center;
+      border:0;
+      cursor:pointer;
+      flex-shrink:0;
+    }
+
     .mp-mic {
       width:46px;
       height:46px;
       min-width:46px;
-      border:0;
       border-radius:50%;
-      color:white;
       background:#00a884;
-      font-size:23px;
+      color:#fff;
     }
-    .mp-mic:disabled { opacity:.45; }
+
+    .mp-mic svg {
+      width:23px;
+      height:23px;
+    }
+
+    .mp-mic:disabled {
+      opacity:.45;
+    }
 
     .mp-gravacao {
       display:none;
       width:100%;
-      align-items:center;
-      gap:10px;
       min-width:0;
+      align-items:center;
+      gap:9px;
+      background:#202c33;
     }
 
     .mp-gravacao.ativa {
       display:flex;
     }
 
-    .mp-gravacao-info {
+    .mp-gravacao button {
+      width:42px;
+      height:42px;
+      min-width:42px;
+      border-radius:50%;
+      padding:10px;
+    }
+
+    .mp-gravacao button svg {
+      width:22px;
+      height:22px;
+    }
+
+    .mp-excluir {
+      background:#45515a;
+      color:#ff7185;
+    }
+
+    .mp-pausar {
+      background:#45515a;
+      color:white;
+    }
+
+    .mp-enviar-audio {
+      background:#00a884;
+      color:white;
+    }
+
+    .mp-gravacao button:disabled {
+      opacity:.4;
+    }
+
+    .mp-info {
+      flex:1;
       display:flex;
       flex-direction:column;
-      flex:1;
       gap:5px;
       min-width:0;
     }
 
-    .mp-gravacao-topo {
+    .mp-info-topo {
       display:flex;
       align-items:center;
       justify-content:space-between;
-      color:#e9edef;
+      gap:7px;
       font-size:12px;
+      color:#e9edef;
     }
 
-    .mp-gravacao-status {
+    .mp-status {
       display:flex;
       align-items:center;
       gap:6px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
     }
 
     .mp-ponto {
-      background:#ff5365;
       width:7px;
       height:7px;
+      min-width:7px;
+      background:#ff5365;
       border-radius:50%;
       animation:mp-piscar 1s infinite;
     }
 
     @keyframes mp-piscar {
-      50% { opacity:.25; }
+      50% { opacity:.2; }
     }
 
     .mp-tempo {
-      font-size:13px;
       font-variant-numeric:tabular-nums;
-      color:#fff;
+      font-size:12px;
     }
 
     .mp-ondas {
       display:flex;
       align-items:center;
-      gap:3px;
+      gap:2px;
       height:17px;
       overflow:hidden;
     }
@@ -102,74 +215,45 @@
     .mp-ondas span {
       flex:1;
       min-width:2px;
-      border-radius:5px;
-      background:#37cba0;
-    }
-
-    .mp-gravacao button {
-      border:0;
-      flex-shrink:0;
-      width:43px;
-      height:43px;
-      border-radius:50%;
-      color:white;
-      font-size:20px;
-      display:grid;
-      place-items:center;
-    }
-
-    .mp-excluir {
-      background:#45545d;
-      color:#ff9aa5 !important;
-    }
-
-    .mp-pausar {
-      background:#45545d;
-    }
-
-    .mp-enviar-audio {
-      background:#00a884;
-    }
-
-    .mp-gravacao button:disabled {
-      opacity:.4;
-    }
-
-    .mp-gravacao.ativa ~ #texto,
-    .mp-gravacao.ativa ~ #botao-enviar {
-      display:none;
+      border-radius:4px;
+      background:#35cba0;
     }
 
     .mp-player-voz {
       display:flex;
       align-items:center;
-      gap:10px;
-      min-width:185px;
+      gap:9px;
+      min-width:180px;
       max-width:260px;
     }
 
     .mp-play {
-      border:0;
-      width:39px;
-      height:39px;
-      min-width:39px;
+      width:40px;
+      height:40px;
+      min-width:40px;
       border-radius:50%;
+      padding:10px;
       background:#d9f8e9;
       color:#14664f;
-      font-size:18px;
+    }
+
+    .mp-play svg {
+      width:22px;
+      height:22px;
     }
 
     .mp-player-dados {
       flex:1;
       display:flex;
       flex-direction:column;
-      gap:3px;
       min-width:0;
+      gap:4px;
     }
 
     .mp-player-barra {
       width:100%;
-      accent-color:#e0ffef;
+      margin:0;
+      accent-color:#c6f5df;
     }
 
     .mp-player-tempo {
@@ -180,92 +264,112 @@
 
   document.head.appendChild(estilo);
 
-  // BOTÃO DO MICROFONE
+  // =====================================
+  // CONSTRUIR GRAVADOR
+  // =====================================
 
-  const mic = criar("button", "mp-mic", "🎙");
+  const mic = criar("button", "mp-mic");
   mic.type = "button";
-  mic.disabled = true;
   mic.title = "Gravar áudio";
+  mic.setAttribute("aria-label", "Gravar áudio");
+  iconeNo(mic, "microfone");
 
   form.appendChild(mic);
 
-  // BARRA COMPACTA DE GRAVAÇÃO
-
   const barra = criar("div", "mp-gravacao");
 
-  const excluir = criar("button", "mp-excluir", "🗑");
+  const excluir = criar("button", "mp-excluir");
   excluir.type = "button";
-  excluir.title = "Descartar";
+  excluir.title = "Descartar gravação";
+  excluir.setAttribute("aria-label", "Descartar gravação");
+  iconeNo(excluir, "lixeira");
 
-  const info = criar("div", "mp-gravacao-info");
-  const topo = criar("div", "mp-gravacao-topo");
-  const status = criar("span", "mp-gravacao-status");
+  const info = criar("div", "mp-info");
+  const topo = criar("div", "mp-info-topo");
 
+  const status = criar("span", "mp-status");
   const ponto = criar("span", "mp-ponto");
-  const textoStatus = criar("span", "", "Gravando");
+  const statusTexto = criar("span", "", "Gravando");
+
+  status.append(ponto, statusTexto);
+
   const tempo = criar("span", "mp-tempo", "00:00");
 
-  status.append(ponto, textoStatus);
   topo.append(status, tempo);
 
   const ondas = criar("div", "mp-ondas");
 
   const alturas = [
-    8,13,6,17,11,7,16,10,5,14,
-    18,7,12,9,16,6,11,18,8,14,
-    5,16,11,7,17,9,12,6
+    7,13,9,17,6,12,16,8,14,5,
+    17,11,7,15,9,18,6,13,10,16,
+    8,14,5,18,12,7,15,9
   ];
 
-  alturas.forEach(h => {
-    const coluna = document.createElement("span");
-    coluna.style.height = h + "px";
-    ondas.appendChild(coluna);
+  alturas.forEach(altura => {
+    const parte = document.createElement("span");
+    parte.style.height = altura + "px";
+    ondas.appendChild(parte);
   });
 
   info.append(topo, ondas);
 
-  const pausar = criar("button", "mp-pausar", "Ⅱ");
+  const pausar = criar("button", "mp-pausar");
   pausar.type = "button";
-  pausar.title = "Pausar ou continuar";
+  pausar.title = "Pausar gravação";
+  iconeNo(pausar, "pausar");
 
-  const enviarAudioBtn = criar(
+  const enviarBotao = criar(
     "button",
-    "mp-enviar-audio",
-    "➤"
+    "mp-enviar-audio"
   );
-  enviarAudioBtn.type = "button";
-  enviarAudioBtn.title = "Enviar áudio agora";
+  enviarBotao.type = "button";
+  enviarBotao.title = "Enviar áudio";
+  iconeNo(enviarBotao, "enviar");
 
   barra.append(
     excluir,
     info,
     pausar,
-    enviarAudioBtn
+    enviarBotao
   );
 
   form.insertBefore(barra, campo);
 
+  // =====================================
+  // ESTADO
+  // =====================================
+
   let contatoId = null;
+
   let gravador = null;
   let fluxo = null;
   let partes = [];
   let audioPronto = null;
+
   let timer = null;
   let inicioTrecho = 0;
   let tempoAcumulado = 0;
   let duracao = 0;
+
   let chatGravado = "";
-  let enviando = false;
   let iniciando = false;
-  let descartarGravacao = false;
-  let enviarQuandoParar = false;
+  let enviando = false;
+  let descartando = false;
+  let enviarAoParar = false;
+
+  // REPRODUÇÃO: APENAS UM ÁUDIO ATIVO
+  let audioAtivo = null;
+  let botaoAtivo = null;
+  let versaoReproducao = 0;
 
   function formatar(segundos) {
     const s = Math.max(0, Math.floor(segundos));
 
-    return String(Math.floor(s / 60))
-      .padStart(2, "0") + ":" +
-      String(s % 60).padStart(2, "0");
+    return (
+      String(Math.floor(s / 60)).padStart(2, "0") +
+      ":" +
+      String(s % 60).padStart(2, "0")
+    );
   }
 
   async function usuarioAtual() {
@@ -296,16 +400,6 @@
     return { user, chatId };
   }
 
-  function segundosAtuais() {
-    let total = tempoAcumulado;
-
-    if (gravador?.state === "recording") {
-      total += Date.now() - inicioTrecho;
-    }
-
-    return total / 1000;
-  }
-
   function liberarMicrofone() {
     fluxo?.getTracks().forEach(t => t.stop());
     fluxo = null;
@@ -316,41 +410,57 @@
     timer = null;
   }
 
-  function mostrarNormal() {
+  function segundosAtuais() {
+    let total = tempoAcumulado;
+
+    if (gravador?.state === "recording") {
+      total += Date.now() - inicioTrecho;
+    }
+
+    return total / 1000;
+  }
+
+  function modoNormal() {
     barra.classList.remove("ativa");
+
     campo.style.display = "";
-    enviarTexto.style.display = "";
+    botaoTexto.style.display = "";
     mic.style.display = "";
 
     excluir.disabled = false;
     pausar.disabled = false;
-    enviarAudioBtn.disabled = false;
-    enviarAudioBtn.textContent = "➤";
+    enviarBotao.disabled = false;
+
     mic.disabled = campo.disabled;
   }
 
-  function mostrarGravador() {
+  function modoGravando() {
     barra.classList.add("ativa");
+
     campo.style.display = "none";
-    enviarTexto.style.display = "none";
+    botaoTexto.style.display = "none";
     mic.style.display = "none";
 
-    textoStatus.textContent = "Gravando";
+    statusTexto.textContent = "Gravando";
     ponto.style.display = "";
     tempo.textContent = "00:00";
-    pausar.textContent = "Ⅱ";
+
+    iconeNo(pausar, "pausar");
+    pausar.title = "Pausar";
   }
 
   function descartar() {
     if (enviando) return;
 
-    descartarGravacao = true;
-    enviarQuandoParar = false;
+    descartando = true;
+    enviarAoParar = false;
 
     pararRelogio();
 
-    if (gravador?.state === "recording" ||
-        gravador?.state === "paused") {
+    if (
+      gravador?.state === "recording" ||
+      gravador?.state === "paused"
+    ) {
       gravador.stop();
     }
 
@@ -362,12 +472,11 @@
     tempoAcumulado = 0;
     duracao = 0;
 
-    mostrarNormal();
+    modoNormal();
   }
 
   function atualizarRelogio() {
     const segundos = segundosAtuais();
-
     tempo.textContent = formatar(segundos);
 
     if (segundos >= 30) {
@@ -385,20 +494,26 @@
       tempoAcumulado += Date.now() - inicioTrecho;
     }
 
-    enviarQuandoParar = enviarDepois;
+    enviarAoParar = enviarDepois;
 
     pararRelogio();
     gravador.stop();
   }
 
+  // =====================================
+  // GRAVAR
+  // =====================================
+
   async function iniciar() {
-    if (campo.disabled || iniciando || enviando) return;
+    if (campo.disabled || iniciando || enviando) {
+      return;
+    }
 
     if (
       !navigator.mediaDevices?.getUserMedia ||
       !window.MediaRecorder
     ) {
-      alert("Este navegador não permite gravar áudio.");
+      alert("Seu navegador não suporta gravação.");
       return;
     }
 
@@ -408,13 +523,16 @@
       const { chatId } = await contexto();
 
       descartar();
-
-      descartarGravacao = false;
+      descartando = false;
       chatGravado = chatId;
 
       fluxo = await navigator.mediaDevices.getUserMedia({
         audio: true
       });
+
+      if (campo.disabled) {
+        throw new Error("Conversa fechada.");
+      }
 
       const formatos = [
         "audio/webm;codecs=opus",
@@ -424,20 +542,18 @@
       ];
 
       const formato = formatos.find(
-        t => MediaRecorder.isTypeSupported(t)
+        tipo => MediaRecorder.isTypeSupported(tipo)
       );
 
-      gravador = new MediaRecorder(
-        fluxo,
-        formato
-          ? {
-              mimeType: formato,
-              audioBitsPerSecond: 24000
-            }
-          : {
-              audioBitsPerSecond: 24000
-            }
-      );
+      const opcoes = {
+        audioBitsPerSecond: 24000
+      };
+
+      if (formato) {
+        opcoes.mimeType = formato;
+      }
+
+      gravador = new MediaRecorder(fluxo, opcoes);
 
       partes = [];
       audioPronto = null;
@@ -454,13 +570,14 @@
         pararRelogio();
         liberarMicrofone();
 
-        if (descartarGravacao) return;
+        if (descartando) return;
 
         duracao = Math.max(
           1,
-          Math.min(30, Math.ceil(
-            tempoAcumulado / 1000
-          ))
+          Math.min(
+            30,
+            Math.ceil(tempoAcumulado / 1000)
+          )
         );
 
         const tipo =
@@ -472,41 +589,50 @@
           type: tipo
         });
 
-        textoStatus.textContent = "Áudio pronto";
+        statusTexto.textContent = "Áudio pronto";
         ponto.style.display = "none";
-        pausar.disabled = true;
         tempo.textContent = formatar(duracao);
 
-        if (enviarQuandoParar) {
+        pausar.disabled = true;
+
+        if (enviarAoParar) {
           await enviar();
         }
       };
 
       gravador.onerror = () => {
-        textoStatus.textContent = "Erro na gravação";
-        liberarMicrofone();
         pararRelogio();
+        liberarMicrofone();
+        statusTexto.textContent = "Erro na gravação";
+        pausar.disabled = true;
       };
 
-      mostrarGravador();
+      modoGravando();
 
       gravador.start();
+
       inicioTrecho = Date.now();
 
       timer = setInterval(atualizarRelogio, 200);
 
     } catch (erro) {
-      console.error(erro);
+      console.error("Microfone:", erro);
+
       descartar();
 
       alert(
-        "Não foi possível usar o microfone. Verifique a permissão."
+        "Não foi possível usar o microfone. " +
+        "Confira a permissão do navegador."
       );
 
     } finally {
       iniciando = false;
     }
   }
+
+  // =====================================
+  // PAUSAR E CONTINUAR
+  // =====================================
 
   function alternarPausa() {
     if (!gravador) return;
@@ -517,8 +643,10 @@
       gravador.pause();
       pararRelogio();
 
-      pausar.textContent = "▶";
-      textoStatus.textContent = "Pausado";
+      iconeNo(pausar, "tocar");
+      pausar.title = "Continuar gravação";
+
+      statusTexto.textContent = "Pausado";
       ponto.style.display = "none";
 
     } else if (gravador.state === "paused") {
@@ -528,15 +656,22 @@
       }
 
       gravador.resume();
+
       inicioTrecho = Date.now();
 
-      pausar.textContent = "Ⅱ";
-      textoStatus.textContent = "Gravando";
+      iconeNo(pausar, "pausar");
+      pausar.title = "Pausar gravação";
+
+      statusTexto.textContent = "Gravando";
       ponto.style.display = "";
 
       timer = setInterval(atualizarRelogio, 200);
     }
   }
+
+  // =====================================
+  // ENVIAR PARA O RENDER
+  // =====================================
 
   async function enviar() {
     if (enviando) return;
@@ -553,10 +688,11 @@
 
     enviando = true;
 
-    enviarAudioBtn.disabled = true;
+    enviarBotao.disabled = true;
     excluir.disabled = true;
     pausar.disabled = true;
-    textoStatus.textContent = "Enviando...";
+
+    statusTexto.textContent = "Enviando...";
 
     try {
       if (
@@ -569,12 +705,11 @@
       const { user, chatId } = await contexto();
 
       if (chatId !== chatGravado) {
-        throw new Error(
-          "Conversa alterada. Grave novamente."
-        );
+        throw new Error("A conversa foi alterada.");
       }
 
       const token = await user.getIdToken();
+
       const tipo = audioPronto.type.split(";")[0];
 
       const extensoes = {
@@ -614,31 +749,35 @@
 
       if (!resposta.ok || !retorno.ok) {
         throw new Error(
-          retorno.error || "Não foi possível enviar."
+          retorno.error || "Erro no envio."
         );
       }
 
+      // ENVIO CONCLUÍDO
       enviando = false;
       descartar();
 
     } catch (erro) {
-      console.error("Envio de áudio:", erro);
-      textoStatus.textContent = "Falha no envio";
-      alert(erro.message);
+      console.error("Envio:", erro);
+
+      statusTexto.textContent = "Falha no envio";
+      alert("Não foi possível enviar: " + erro.message);
 
     } finally {
       enviando = false;
-      enviarAudioBtn.disabled = false;
+      enviarBotao.disabled = false;
       excluir.disabled = false;
     }
   }
 
   mic.onclick = iniciar;
-  pausar.onclick = alternarPausa;
   excluir.onclick = descartar;
-  enviarAudioBtn.onclick = enviar;
+  pausar.onclick = alternarPausa;
+  enviarBotao.onclick = enviar;
 
+  // =====================================
   // IDENTIFICAR CONTATO
+  // =====================================
 
   function selecionarContato(evento) {
     const item = evento.target.closest(".contato");
@@ -653,7 +792,10 @@
   contatos.addEventListener("click", selecionarContato);
 
   contatos.addEventListener("keydown", evento => {
-    if (evento.key === "Enter" || evento.key === " ") {
+    if (
+      evento.key === "Enter" ||
+      evento.key === " "
+    ) {
       selecionarContato(evento);
     }
   });
@@ -671,23 +813,51 @@
 
   mic.disabled = campo.disabled;
 
-  // PLAYER DE ÁUDIO NO CHAT
+  // =====================================
+  // APENAS UM ÁUDIO TOCANDO
+  // =====================================
+
+  function pararAudioAnterior(novoAudio) {
+    if (audioAtivo && audioAtivo !== novoAudio) {
+      audioAtivo.pause();
+
+      if (botaoAtivo) {
+        iconeNo(botaoAtivo, "tocar");
+      }
+    }
+
+    audioAtivo = novoAudio;
+  }
+
+  // =====================================
+  // PLAYER NAS MENSAGENS
+  // =====================================
 
   function montarPlayer(bolha) {
     if (
       bolha.dataset.tipo !== "audio" ||
       bolha.dataset.playerPronto === "1"
-    ) return;
+    ) {
+      return;
+    }
 
     bolha.dataset.playerPronto = "1";
     bolha.replaceChildren();
 
     const caixa = criar("div", "mp-player-voz");
-    const botao = criar("button", "mp-play", "▶");
+
+    const botao = criar("button", "mp-play");
     botao.type = "button";
+    botao.title = "Ouvir áudio";
+    iconeNo(botao, "tocar");
 
     const dados = criar("div", "mp-player-dados");
-    const progresso = criar("input", "mp-player-barra");
+
+    const progresso = criar(
+      "input",
+      "mp-player-barra"
+    );
+
     progresso.type = "range";
     progresso.min = "0";
     progresso.max = "100";
@@ -707,6 +877,7 @@
     bolha.append(caixa);
 
     const audio = new Audio();
+
     let url = null;
     let carregando = false;
 
@@ -715,9 +886,17 @@
 
       if (!audio.paused) {
         audio.pause();
-        botao.textContent = "▶";
+        iconeNo(botao, "tocar");
+
+        if (audioAtivo === audio) {
+          audioAtivo = null;
+          botaoAtivo = null;
+        }
+
         return;
       }
+
+      const minhaVersao = ++versaoReproducao;
 
       try {
         if (!url) {
@@ -727,16 +906,18 @@
           const user = await usuarioAtual();
 
           if (!user) {
-            throw new Error("Faça login para ouvir.");
+            throw new Error("Faça login.");
           }
 
           const token = await user.getIdToken();
 
+          const chatId = bolha.dataset.chatId;
+          const messageId = bolha.dataset.messageId;
+
           const resposta = await fetch(
             SERVER + "/api/audio/" +
-              encodeURIComponent(bolha.dataset.chatId) +
-              "/" +
-              encodeURIComponent(bolha.dataset.messageId),
+              encodeURIComponent(chatId) + "/" +
+              encodeURIComponent(messageId),
             {
               headers: {
                 Authorization: "Bearer " + token
@@ -746,36 +927,69 @@
 
           if (!resposta.ok) {
             throw new Error(
-              "Erro ao carregar áudio: " + resposta.status
+              "Erro HTTP " + resposta.status
             );
           }
 
           const arquivo = await resposta.blob();
+
+          if (!arquivo.size) {
+            throw new Error("Áudio vazio.");
+          }
 
           url = URL.createObjectURL(arquivo);
           audio.src = url;
           progresso.disabled = false;
         }
 
+        // Se outro áudio foi selecionado enquanto
+        // este carregava, não começar a tocar.
+        if (
+          minhaVersao !== versaoReproducao ||
+          !bolha.isConnected
+        ) {
+          iconeNo(botao, "tocar");
+          return;
+        }
+
+        // PAUSAR PRIMEIRO ÁUDIO
+        pararAudioAnterior(audio);
+        botaoAtivo = botao;
+
+        // TOCAR O NOVO
         await audio.play();
-        botao.textContent = "Ⅱ";
+
+        iconeNo(botao, "pausar");
 
       } catch (erro) {
-        console.error("Reprodução:", erro);
-        botao.textContent = "▶";
+        console.error("Player:", erro);
+
+        iconeNo(botao, "tocar");
+
+        if (audioAtivo === audio) {
+          audioAtivo = null;
+          botaoAtivo = null;
+        }
+
         textoTempo.textContent = "Erro ao ouvir";
+
       } finally {
         carregando = false;
       }
     };
 
     audio.onpause = () => {
-      botao.textContent = "▶";
+      iconeNo(botao, "tocar");
     };
 
     audio.onended = () => {
-      botao.textContent = "▶";
+      iconeNo(botao, "tocar");
       progresso.value = "0";
+
+      if (audioAtivo === audio) {
+        audioAtivo = null;
+        botaoAtivo = null;
+      }
     };
 
     audio.ontimeupdate = () => {
@@ -785,7 +999,8 @@
       ) {
         progresso.value = String(
           Math.round(
-            audio.currentTime / audio.duration * 100
+            audio.currentTime /
+            audio.duration * 100
           )
         );
 
@@ -807,9 +1022,16 @@
       }
     };
 
+    // LIBERAR ÁUDIO QUANDO SAIR DA CONVERSA
+
     const observador = new MutationObserver(() => {
       if (!bolha.isConnected) {
         audio.pause();
+
+        if (audioAtivo === audio) {
+          audioAtivo = null;
+          botaoAtivo = null;
+        }
 
         if (url) {
           URL.revokeObjectURL(url);
@@ -830,9 +1052,11 @@
     ).forEach(montarPlayer);
   }
 
-  new MutationObserver(atualizarPlayers).observe(lista, {
-    childList: true
-  });
+  new MutationObserver(atualizarPlayers).observe(
+    lista,
+    { childList: true }
+  );
 
   atualizarPlayers();
+
 })();
