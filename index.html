@@ -1,13 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
- content="width=device-width, initial-scale=1, viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
-<meta name="description"
- content="Mensagens Plus - Parceira Vem Comigo Deus">
+<meta name="description" content="Mensagens Plus - Parceira Vem Comigo Deus">
 
 <title>Mensagens Plus</title>
 
@@ -26,9 +24,7 @@
   --chat: #111821;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html, body {
   margin: 0;
@@ -43,13 +39,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-button, input {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
+button, input { font: inherit; }
+button { cursor: pointer; }
 
 button:focus-visible,
 input:focus-visible,
@@ -58,17 +49,8 @@ input:focus-visible,
   outline-offset: 2px;
 }
 
-.oculto {
-  display: none !important;
-}
-
-/* HEADER HIDDEN */
-
-header {
-  display: none;
-}
-
-/* MAIN LAYOUT */
+.oculto { display: none !important; }
+header { display: none; }
 
 .container {
   width: 100%;
@@ -85,7 +67,7 @@ header {
   min-height: 0;
 }
 
-/* CONTACTS SIDEBAR */
+/* CONTATOS */
 
 aside {
   min-height: 0;
@@ -96,9 +78,7 @@ aside {
   border-right: 1px solid #e5e9eb;
 }
 
-.topo-contatos {
-  padding: 20px 16px 8px;
-}
+.topo-contatos { padding: 20px 16px 8px; }
 
 .topo-linha {
   display: flex;
@@ -112,7 +92,7 @@ aside {
   color: #087b5d;
   font-size: 26px;
   font-weight: 750;
-  letter-spacing: -0.5px;
+  letter-spacing: -.5px;
 }
 
 .topo-icone {
@@ -133,8 +113,6 @@ aside {
   overflow-wrap: anywhere;
 }
 
-/* SEARCH */
-
 .pesquisa {
   display: flex;
   align-items: center;
@@ -145,10 +123,7 @@ aside {
   background: #f0f2f5;
 }
 
-.pesquisa span {
-  color: #667781;
-  font-size: 21px;
-}
+.pesquisa span { color: #667781; font-size: 21px; }
 
 .pesquisa input {
   flex: 1;
@@ -161,8 +136,6 @@ aside {
   font-size: 15px;
   color: #111b21;
 }
-
-/* FILTERS */
 
 .filtros {
   display: flex;
@@ -186,8 +159,6 @@ aside {
   font-weight: bold;
 }
 
-/* CONTACT LIST */
-
 #contatos {
   flex: 1;
   min-height: 0;
@@ -205,9 +176,7 @@ aside {
   cursor: pointer;
 }
 
-.contato:hover {
-  background: #f6f7f8;
-}
+.contato:hover { background: #f6f7f8; }
 
 .avatar {
   width: 55px;
@@ -229,10 +198,7 @@ aside {
   object-fit: cover;
 }
 
-.contato-info {
-  min-width: 0;
-  flex: 1;
-}
+.contato-info { min-width: 0; flex: 1; }
 
 .contato-topo {
   display: flex;
@@ -265,8 +231,6 @@ aside {
   text-overflow: ellipsis;
 }
 
-/* BOTTOM NAVIGATION */
-
 .navegacao {
   display: flex;
   align-items: center;
@@ -289,16 +253,10 @@ aside {
   padding: 7px 15px;
 }
 
-.nav-item.ativo {
-  color: #087b5d;
-  font-weight: bold;
-}
+.nav-item.ativo { color: #087b5d; font-weight: bold; }
+.nav-item .simbolo { font-size: 24px; }
 
-.nav-item .simbolo {
-  font-size: 24px;
-}
-
-/* CHAT */
+/* CONVERSA */
 
 .conversa {
   display: flex;
@@ -340,10 +298,7 @@ aside {
   font-weight: bold;
 }
 
-.dados-chat {
-  flex: 1;
-  min-width: 0;
-}
+.dados-chat { flex: 1; min-width: 0; }
 
 .titulo-chat {
   font-size: 16px;
@@ -358,8 +313,6 @@ aside {
   font-size: 12px;
   margin-top: 4px;
 }
-
-/* MESSAGES */
 
 .mensagens {
   flex: 1;
@@ -399,8 +352,6 @@ aside {
   border-radius: 13px 5px 13px 13px;
 }
 
-/* MESSAGE INPUT */
-
 .enviar {
   display: flex;
   align-items: center;
@@ -422,9 +373,7 @@ aside {
   font-size: 16px;
 }
 
-.enviar input::placeholder {
-  color: #b8c5ca;
-}
+.enviar input::placeholder { color: #b8c5ca; }
 
 .enviar button {
   width: 46px;
@@ -438,9 +387,7 @@ aside {
   font-size: 21px;
 }
 
-.enviar button:disabled {
-  opacity: .45;
-}
+.enviar button:disabled { opacity: .45; }
 
 #aviso-chat {
   background: #202c33;
@@ -477,15 +424,9 @@ aside {
   font-size: 29px;
 }
 
-.login h2 {
-  margin: 0 0 12px;
-  font-size: 24px;
-}
+.login h2 { margin: 0 0 12px; font-size: 24px; }
 
-.login p {
-  color: #667781;
-  font-size: 14px;
-}
+.login p { color: #667781; font-size: 14px; }
 
 .login input {
   display: block;
@@ -499,14 +440,9 @@ aside {
   background: white;
 }
 
-.login input:focus {
-  border-color: #00a884;
-}
+.login input:focus { border-color: #00a884; }
 
-.botoes-login {
-  display: flex;
-  gap: 9px;
-}
+.botoes-login { display: flex; gap: 9px; }
 
 .login button {
   padding: 13px;
@@ -534,19 +470,48 @@ aside {
   color: #243138;
 }
 
+#mostrar-telefone {
+  width: 100%;
+  margin-top: 10px;
+  background: #ffffff;
+  border: 1px solid #00a884;
+  color: #087b5d;
+}
+
+#login-telefone {
+  margin-top: 15px;
+  padding-top: 12px;
+  border-top: 1px solid #edf0f1;
+  text-align: left;
+}
+
+#login-telefone button {
+  width: 100%;
+  margin-top: 8px;
+  background: #00a884;
+  color: white;
+}
+
+#login-telefone #confirmar-codigo {
+  background: #087b5d;
+}
+
+#recaptcha-container {
+  margin: 12px 0;
+  overflow-x: auto;
+}
+
 #aviso-login {
   color: #b54c30;
   font-size: 13px;
   margin-top: 10px;
+  overflow-wrap: anywhere;
 }
 
-/* MOBILE */
+/* CELULAR */
 
 @media (max-width: 700px) {
-
-  .container {
-    height: 100dvh;
-  }
+  .container { height: 100dvh; }
 
   .app {
     display: block;
@@ -563,55 +528,43 @@ aside {
     height: 100%;
   }
 
-  .app.chat-aberto aside {
-    display: none;
-  }
+  .app.chat-aberto aside { display: none; }
+  .app.chat-aberto .conversa { display: flex; }
 
-  .app.chat-aberto .conversa {
-    display: flex;
-  }
-
-  .mensagens {
-    padding: 14px 11px;
-  }
-
-  .bolha {
-    max-width: 88%;
-  }
+  .mensagens { padding: 14px 11px; }
+  .bolha { max-width: 88%; }
 
   .enviar {
-    padding-bottom: max(
-      10px,
-      env(safe-area-inset-bottom)
-    );
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
   }
 
   .navegacao {
     padding-bottom: env(safe-area-inset-bottom);
     height: calc(73px + env(safe-area-inset-bottom));
   }
-}
 
+  .login {
+    margin: max(12px, 3vh) auto;
+    padding: 22px;
+    max-height: calc(100dvh - 24px);
+  }
+}
 </style>
 </head>
 
 <body>
 
 <header>
-  <button id="sair" class="oculto">
-    Sair
-  </button>
+  <button id="sair" class="oculto">Sair</button>
 </header>
 
 <div class="container">
 
   <!-- LOGIN -->
   <section id="login" class="login">
-
     <div class="login-logo">M+</div>
 
     <h2>Mensagens Plus</h2>
-
     <p>Parceira Vem Comigo Deus</p>
 
     <input
@@ -627,154 +580,117 @@ aside {
       autocomplete="current-password">
 
     <div class="botoes-login">
-
-      <button id="entrar" type="button">
-        Entrar
-      </button>
-
-      <button id="cadastrar" type="button">
-        Criar conta
-      </button>
-
+      <button id="entrar" type="button">Entrar</button>
+      <button id="cadastrar" type="button">Criar conta</button>
     </div>
 
-    <button id="google" type="button">
-      Entrar com Google
+    <button id="google" type="button">Entrar com Google</button>
+
+    <!-- NOVO LOGIN POR TELEFONE -->
+    <button id="mostrar-telefone" type="button">
+      Entrar com telefone
     </button>
 
-    <p id="aviso-login" role="status"></p>
+    <div id="login-telefone" class="oculto">
+      <p>Digite seu telefone com o código do país.</p>
 
+      <input
+        id="telefone"
+        type="tel"
+        placeholder="+55 DDD número"
+        autocomplete="tel">
+
+      <div id="recaptcha-container"></div>
+
+      <button id="enviar-codigo" type="button">
+        Enviar código SMS
+      </button>
+
+      <input
+        id="codigo-sms"
+        type="text"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        placeholder="Código de 6 dígitos"
+        maxlength="6"
+        class="oculto">
+
+      <button
+        id="confirmar-codigo"
+        type="button"
+        class="oculto">
+        Confirmar código e entrar
+      </button>
+    </div>
+
+    <p id="aviso-login" role="status" aria-live="polite"></p>
   </section>
 
-  <!-- APPLICATION -->
+  <!-- APLICATIVO -->
   <section id="app" class="app oculto">
 
-    <!-- CONTACT LIST -->
     <aside>
-
       <div class="topo-contatos">
-
         <div class="topo-linha">
-
           <h2>Mensagens Plus</h2>
-
           <button
             class="topo-icone"
             id="novo-contato"
             type="button"
             title="Pesquisar contato"
-            aria-label="Pesquisar contato">
-            +
-          </button>
-
+            aria-label="Pesquisar contato">+</button>
         </div>
-
-        <div id="usuario-atual"
-          class="identidade"></div>
-
+        <div id="usuario-atual" class="identidade"></div>
       </div>
 
-      <!-- SEARCH -->
       <div class="pesquisa">
-
         <span>⌕</span>
-
         <input
           id="buscar-contato"
           type="search"
           placeholder="Pesquisar contato..."
           aria-label="Pesquisar contato">
-
       </div>
 
-      <!-- FILTER -->
       <div class="filtros">
-
-        <button
-          class="filtro ativo"
-          type="button">
-          Todas
-        </button>
-
+        <button class="filtro ativo" type="button">Todas</button>
       </div>
 
-      <!-- CONTACTS -->
-      <div id="contatos">
-        Carregando contatos...
-      </div>
+      <div id="contatos">Carregando contatos...</div>
 
-      <!-- BOTTOM BAR -->
-      <nav class="navegacao"
-        aria-label="Navegação principal">
-
-        <button
-          class="nav-item ativo"
-          id="nav-conversas"
-          type="button">
-
+      <nav class="navegacao" aria-label="Navegação principal">
+        <button class="nav-item ativo" id="nav-conversas" type="button">
           <span class="simbolo">▣</span>
           Conversas
-
         </button>
 
-        <button
-          class="nav-item"
-          id="nav-perfil"
-          type="button">
-
+        <button class="nav-item" id="nav-perfil" type="button">
           <span class="simbolo">◉</span>
           Você
-
         </button>
-
       </nav>
-
     </aside>
 
-    <!-- CHAT WINDOW -->
     <section class="conversa">
-
       <div class="barra-chat">
-
         <button
           id="voltar-chat"
           type="button"
-          aria-label="Voltar aos contatos">
-          ←
-        </button>
+          aria-label="Voltar aos contatos">←</button>
 
-        <div
-          class="avatar-chat"
-          id="avatar-chat">
-          M+
-        </div>
+        <div class="avatar-chat" id="avatar-chat">M+</div>
 
         <div class="dados-chat">
-
-          <div
-            id="titulo-chat"
-            class="titulo-chat">
+          <div id="titulo-chat" class="titulo-chat">
             Selecione uma conversa
           </div>
-
-          <div class="info-chat">
-            Mensagens particulares
-          </div>
-
+          <div class="info-chat">Mensagens particulares</div>
         </div>
-
       </div>
 
-      <!-- MESSAGES -->
-      <div
-        id="mensagens"
-        class="mensagens"
-        aria-live="polite">
-      </div>
+      <div id="mensagens" class="mensagens" aria-live="polite"></div>
 
-      <!-- TEXT AND MICROPHONE -->
       <form id="form-enviar" class="enviar">
-
         <input
           id="texto"
           type="text"
@@ -787,35 +703,26 @@ aside {
           id="botao-enviar"
           type="submit"
           aria-label="Enviar mensagem"
-          disabled>
-          ➤
-        </button>
-
+          disabled>➤</button>
       </form>
 
       <div id="aviso-chat" role="status"></div>
-
     </section>
-
   </section>
-
 </div>
 
-<!-- FIREBASE AND EXISTING FUNCTIONS -->
-
+<!-- ARQUIVOS EXISTENTES -->
 <script type="module" src="./app.js"></script>
 <script type="module" src="./perfil.js"></script>
 <script type="module" src="./notificacoes.js"></script>
 <script type="module" src="./conversas-ui.js"></script>
 <script src="./audio.js"></script>
-<script src="./ligacoes.js?v=
 
+<!-- O ligacoes.js foi temporariamente retirado -->
 
-<!-- INTERFACE NAVIGATION -->
-
+<!-- NAVEGAÇÃO DA INTERFACE -->
 <script>
 (() => {
-
   const app = document.getElementById("app");
   const contatos = document.getElementById("contatos");
   const busca = document.getElementById("buscar-contato");
@@ -832,43 +739,35 @@ aside {
   }
 
   function organizar() {
+    contatos.querySelectorAll(".contato").forEach(item => {
+      if (item.dataset.estilizado === "1") return;
 
-    contatos.querySelectorAll(".contato")
-      .forEach(item => {
+      const nome = item.textContent.trim();
+      item.dataset.estilizado = "1";
+      item.dataset.nome = nome.toLowerCase();
 
-        if (item.dataset.estilizado === "1") {
-          return;
-        }
+      const avatar = document.createElement("div");
+      avatar.className = "avatar";
+      avatar.textContent = iniciais(nome);
 
-        const nome = item.textContent.trim();
+      const info = document.createElement("div");
+      info.className = "contato-info";
 
-        item.dataset.estilizado = "1";
-        item.dataset.nome = nome.toLowerCase();
+      const topo = document.createElement("div");
+      topo.className = "contato-topo";
 
-        const avatar = document.createElement("div");
-        avatar.className = "avatar";
-        avatar.textContent = iniciais(nome);
+      const titulo = document.createElement("div");
+      titulo.className = "contato-nome";
+      titulo.textContent = nome;
 
-        const info = document.createElement("div");
-        info.className = "contato-info";
+      const descricao = document.createElement("div");
+      descricao.className = "contato-sub";
+      descricao.textContent = "Nenhuma mensagem ainda";
 
-        const topo = document.createElement("div");
-        topo.className = "contato-topo";
-
-        const titulo = document.createElement("div");
-        titulo.className = "contato-nome";
-        titulo.textContent = nome;
-
-        const descricao = document.createElement("div");
-        descricao.className = "contato-sub";
-        descricao.textContent = "Nenhuma mensagem ainda";
-
-        topo.append(titulo);
-        info.append(topo, descricao);
-
-        item.replaceChildren(avatar, info);
-
-      });
+      topo.append(titulo);
+      info.append(topo, descricao);
+      item.replaceChildren(avatar, info);
+    });
 
     filtrar();
   }
@@ -876,81 +775,55 @@ aside {
   function filtrar() {
     const texto = busca.value.toLowerCase().trim();
 
-    contatos.querySelectorAll(".contato")
-      .forEach(item => {
-
-        const nome = item.dataset.nome || "";
-
-        item.style.display =
-          nome.includes(texto) ? "" : "none";
-
-      });
+    contatos.querySelectorAll(".contato").forEach(item => {
+      const nome = item.dataset.nome || "";
+      item.style.display = nome.includes(texto) ? "" : "none";
+    });
   }
 
   const observador = new MutationObserver(organizar);
-
-  observador.observe(contatos, {
-    childList: true
-  });
+  observador.observe(contatos, { childList: true });
 
   organizar();
-
   busca.addEventListener("input", filtrar);
 
-  document.getElementById("novo-contato")
-    .onclick = () => busca.focus();
+  document.getElementById("novo-contato").onclick = () => busca.focus();
 
   contatos.addEventListener("click", evento => {
-
     const item = evento.target.closest(".contato");
-
     if (!item) return;
 
-    const nome = item.querySelector(".contato-nome")
-      ?.textContent || "Contato";
-
+    const nome = item.querySelector(".contato-nome")?.textContent || "Contato";
     avatarChat.textContent = iniciais(nome);
-
     app.classList.add("chat-aberto");
   });
 
   contatos.addEventListener("keydown", evento => {
-
-    if (
-      evento.key === "Enter" &&
-      evento.target.closest(".contato")
-    ) {
+    if (evento.key === "Enter" && evento.target.closest(".contato")) {
       app.classList.add("chat-aberto");
     }
-
   });
 
-  document.getElementById("voltar-chat")
-    .onclick = () => {
-      app.classList.remove("chat-aberto");
-    };
+  document.getElementById("voltar-chat").onclick = () => {
+    app.classList.remove("chat-aberto");
+  };
 
-  document.getElementById("nav-perfil")
-    .onclick = () => {
-      document.querySelector(".mp-perfil-btn")?.click();
-    };
+  document.getElementById("nav-perfil").onclick = () => {
+    document.querySelector(".mp-perfil-btn")?.click();
+  };
 
-  document.getElementById("nav-conversas")
-    .onclick = () => {
-      app.classList.remove("chat-aberto");
-    };
+  document.getElementById("nav-conversas").onclick = () => {
+    app.classList.remove("chat-aberto");
+  };
 
   new MutationObserver(() => {
-
     if (app.classList.contains("oculto")) {
       app.classList.remove("chat-aberto");
     }
-
   }).observe(app, {
     attributes: true,
     attributeFilter: ["class"]
   });
-
 })();
 </script>
 
