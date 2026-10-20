@@ -1,3 +1,4 @@
+
 import {
   initializeApp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
@@ -9,7 +10,9 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
-  signOut
+  signOut,
+  RecaptchaVerifier,
+  signInWithPhoneNumber
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 
 import {
@@ -30,7 +33,7 @@ import { firebaseConfig } from "./firebase-config.js";
 // ========================================
 // MENSAGENS PLUS
 // PARCEIRA VEM COMIGO DEUS
-// MOTOR COMPLETO
+// LOGIN E MOTOR DO APLICATIVO
 // ========================================
 
 const firebaseApp = initializeApp(firebaseConfig);
@@ -49,6 +52,11 @@ let pararContatos = null;
 let pararMensagens = null;
 let versaoConversa = 0;
 let nomePerfil = "";
+
+// ESTADO DO LOGIN POR TELEFONE
+let recaptchaVerifier = null;
+let confirmacaoTelefone = null;
+let telefoneSolicitado = "";
 
 // ========================================
 // AVISOS E ERROS
@@ -90,6 +98,39 @@ function mostrarErro(id, erro) {
     "auth/too-many-requests":
       "Muitas tentativas. Aguarde um pouco.",
 
+    "auth/invalid-phone-number":
+      "Telefone inválido. Use o formato internacional, como +5511991234567.",
+
+    "auth/missing-phone-number":
+      "Digite seu número de telefone.",
+
+    "auth/invalid-verification-code":
+      "O código SMS está incorreto.",
+
+    "auth/code-expired":
+      "O código expirou. Solicite outro SMS.",
+
+    "auth/session-expired":
+      "A sessão expirou. Solicite um novo código SMS.",
+
+    "auth/captcha-check-failed":
+      "A verificação de segurança falhou. Tente novamente.",
+
+    "auth/quota-exceeded":
+      "O limite de SMS foi atingido. Tente novamente mais tarde.",
+
+    "auth/billing-not-enabled":
+      "Verifique a configuração de cobrança do projeto Firebase.",
+
+    "auth/operation-not-allowed":
+      "Ative o método de login correspondente no Firebase Authentication.",
+
+    "auth/invalid-app-credential":
+      "A verificação de segurança falhou. Recarregue a página e tente novamente.",
+
+    "auth/network-request-failed":
+      "Falha de conexão. Confira a internet e tente novamente.",
+
     "permission-denied":
       "Permissão negada pelo Firestore. Confira as regras.",
 
@@ -99,9 +140,9 @@ function mostrarErro(id, erro) {
 
   aviso(
     id,
-    traducoes[erro.code] ||
-    erro.message ||
-    "Ocorreu um erro."
+    traducoes[erro?.code] ||
+    erro?.message ||
+    "Ocorreu um erro. Tente novamente."
   );
 }
 
@@ -179,10 +220,7 @@ el("google").onclick = async () => {
 
     const provider = new GoogleAuthProvider();
 
-    await signInWithPopup(
-      auth,
-      provider
-    );
+    await signInWithPopup(auth, provider);
 
     aviso("aviso-login", "");
 
@@ -190,6 +228,182 @@ el("google").onclick = async () => {
     mostrarErro("aviso-login", erro);
   }
 };
+
+// ========================================
+// LOGIN COM TELEFONE
+// ========================================
+
+// ABRIR A ÁREA DE TELEFONE
+el("mostrar-telefone").onclick = () => {
+  el("login-telefone").classList.remove("oculto");
+  aviso("aviso-login", "");
+
+  el("telefone").focus();
+};
+
+// CRIAR VERIFICADOR DE SEGURANÇA
+async function prepararRecaptcha() {
+  if (!recaptchaVerifier) {
+    recaptchaVerifier = new RecaptchaVerifier(
+      auth,
+      "recaptcha-container",
+      {
+        size: "normal",
+
+        callback: () => {
+          console.log(
+            "Mensagens Plus: verificação de segurança concluída."
+          );
+        },
+
+        "expired-callback": () => {
+          aviso(
+            "aviso-login",
+            "A verificação expirou. Tente novamente."
+          );
+        }
+      }
+    );
+  }
+
+  await recaptchaVerifier.render();
+
+  return recaptchaVerifier;
+}
+
+// SOLICITAR CÓDIGO SMS
+el("enviar-codigo").onclick = async () => {
+  try {
+    const telefone = el("telefone").value.trim();
+
+    if (!/^\+[1-9]\d{7,14}$/.test(telefone)) {
+      aviso(
+        "aviso-login",
+        "Digite o telefone com código do país. Exemplo: +5511991234567"
+      );
+
+      el("telefone").focus();
+      return;
+    }
+
+    el("enviar-codigo").disabled = true;
+
+    aviso(
+      "aviso-login",
+      "Preparando verificação de segurança..."
+    );
+
+    const verifier = await prepararRecaptcha();
+
+    aviso(
+      "aviso-login",
+      "Solicitando o código SMS..."
+    );
+
+    confirmacaoTelefone = await signInWithPhoneNumber(
+      auth,
+      telefone,
+      verifier
+    );
+
+    telefoneSolicitado = telefone;
+
+    el("codigo-sms").classList.remove("oculto");
+    el("confirmar-codigo").classList.remove("oculto");
+
+    el("codigo-sms").value = "";
+    el("codigo-sms").focus();
+
+    aviso(
+      "aviso-login",
+      "Código enviado. Confira o SMS recebido no seu telefone."
+    );
+
+  } catch (erro) {
+    mostrarErro("aviso-login", erro);
+
+    // Permitir uma nova tentativa de verificação.
+    if (recaptchaVerifier) {
+      try {
+        await recaptchaVerifier.render();
+
+        if (typeof grecaptcha !== "undefined") {
+          const widget = await recaptchaVerifier.render();
+          grecaptcha.reset(widget);
+        }
+      } catch (erroRecaptcha) {
+        console.warn(
+          "Não foi possível reiniciar a verificação:",
+          erroRecaptcha
+        );
+
+        try {
+          recaptchaVerifier.clear();
+        } catch (_) {}
+
+        recaptchaVerifier = null;
+      }
+    }
+
+  } finally {
+    el("enviar-codigo").disabled = false;
+  }
+};
+
+// CONFIRMAR CÓDIGO SMS
+el("confirmar-codigo").onclick = async () => {
+  try {
+    const codigo = el("codigo-sms").value.trim();
+
+    if (!confirmacaoTelefone) {
+      aviso(
+        "aviso-login",
+        "Solicite primeiro o código SMS."
+      );
+      return;
+    }
+
+    if (!/^\d{6}$/.test(codigo)) {
+      aviso(
+        "aviso-login",
+        "Digite o código de 6 números recebido por SMS."
+      );
+
+      el("codigo-sms").focus();
+      return;
+    }
+
+    el("confirmar-codigo").disabled = true;
+
+    aviso(
+      "aviso-login",
+      "Verificando o código..."
+    );
+
+    await confirmacaoTelefone.confirm(codigo);
+
+    // O Firebase atualiza o estado de autenticação.
+    // onAuthStateChanged abrirá o aplicativo.
+    confirmacaoTelefone = null;
+    telefoneSolicitado = "";
+
+    aviso("aviso-login", "");
+
+  } catch (erro) {
+    mostrarErro("aviso-login", erro);
+
+  } finally {
+    el("confirmar-codigo").disabled = false;
+  }
+};
+
+// PERMITIR CONFIRMAR PELO TECLADO
+el("codigo-sms").addEventListener("keydown", evento => {
+  if (evento.key === "Enter") {
+    evento.preventDefault();
+    el("confirmar-codigo").click();
+  }
+});
 
 // ========================================
 // SAIR
@@ -208,7 +422,6 @@ el("sair").onclick = async () => {
 // ========================================
 
 onAuthStateChanged(auth, async user => {
-  // ENCERRAR LISTENERS ANTIGOS
   pararContatos?.();
   pararMensagens?.();
 
@@ -239,7 +452,6 @@ onAuthStateChanged(auth, async user => {
     return;
   }
 
-  // LIMPAR CONVERSA ANTERIOR
   el("texto").disabled = true;
   el("botao-enviar").disabled = true;
 
@@ -251,7 +463,6 @@ onAuthStateChanged(auth, async user => {
   aviso("aviso-chat", "");
 
   try {
-    // CONSULTAR PERFIL EXISTENTE
     const perfilRef = doc(
       db,
       "users",
@@ -267,26 +478,37 @@ onAuthStateChanged(auth, async user => {
     const nomePadrao =
       user.displayName ||
       user.email?.split("@")[0] ||
+      user.phoneNumber ||
       "Usuário";
 
     const nomeSalvo = perfilDoc.exists()
       ? perfilDoc.data().displayName
       : null;
 
-    nomePerfil =
-      nomeSalvo ||
-      nomePadrao;
+    nomePerfil = nomeSalvo || nomePadrao;
 
-    el("usuario-atual").textContent =
-      nomePerfil;
+    el("usuario-atual").textContent = nomePerfil;
 
     // CRIAR PERFIL SE AINDA NÃO EXISTIR
     if (!perfilDoc.exists()) {
       await setDoc(perfilRef, {
         uid: user.uid,
         displayName: nomePerfil,
-        email: user.email || ""
+        email: user.email || "",
+        phoneNumber: user.phoneNumber || "",
+        createdAt: serverTimestamp()
       });
+    } else if (user.phoneNumber) {
+      // Completar o telefone sem substituir o perfil existente.
+      const dadosPerfil = perfilDoc.data();
+
+      if (!dadosPerfil.phoneNumber) {
+        await setDoc(
+          perfilRef,
+          { phoneNumber: user.phoneNumber },
+          { merge: true }
+        );
+      }
     }
 
     if (auth.currentUser?.uid !== user.uid) {
@@ -325,11 +547,7 @@ onAuthStateChanged(auth, async user => {
           item.dataset.uid = pessoa.id;
           item.textContent = nome;
 
-          item.setAttribute(
-            "role",
-            "button"
-          );
-
+          item.setAttribute("role", "button");
           item.tabIndex = 0;
 
           item.onclick = () => {
@@ -354,10 +572,7 @@ onAuthStateChanged(auth, async user => {
       },
 
       erro => {
-        mostrarErro(
-          "aviso-chat",
-          erro
-        );
+        mostrarErro("aviso-chat", erro);
       }
     );
 
@@ -394,10 +609,7 @@ async function abrirConversa(outroUsuarioId, nome) {
   el("texto").disabled = true;
   el("botao-enviar").disabled = true;
 
-  aviso(
-    "aviso-chat",
-    "Abrindo conversa..."
-  );
+  aviso("aviso-chat", "Abrindo conversa...");
 
   try {
     const referencia = doc(
@@ -418,8 +630,6 @@ async function abrirConversa(outroUsuarioId, nome) {
         throw erro;
       }
 
-      // CONVERSAS EXISTENTES NÃO PODEM
-      // SER ALTERADAS PELAS REGRAS ATUAIS
       const existente = await getDoc(referencia);
 
       if (!existente.exists()) {
@@ -446,7 +656,6 @@ async function abrirConversa(outroUsuarioId, nome) {
       return;
     }
 
-    // HABILITAR DIGITAÇÃO
     el("texto").disabled = false;
     el("botao-enviar").disabled = false;
 
@@ -455,7 +664,6 @@ async function abrirConversa(outroUsuarioId, nome) {
 
     aviso("aviso-chat", "");
 
-    // BUSCAR MENSAGENS EM TEMPO REAL
     const consulta = query(
       collection(
         db,
@@ -470,9 +678,7 @@ async function abrirConversa(outroUsuarioId, nome) {
       consulta,
 
       resultado => {
-        if (
-          minhaVersao !== versaoConversa
-        ) {
+        if (minhaVersao !== versaoConversa) {
           return;
         }
 
@@ -482,61 +688,46 @@ async function abrirConversa(outroUsuarioId, nome) {
         resultado.forEach(documento => {
           const mensagem = documento.data();
 
-          
-const bolha = document.createElement("div");
+          const bolha = document.createElement("div");
 
-bolha.className = "bolha";
+          bolha.className = "bolha";
 
-// Identificar cada mensagem e sua conversa
-bolha.dataset.messageId = documento.id;
-bolha.dataset.chatId = chatId;
+          bolha.dataset.messageId = documento.id;
+          bolha.dataset.chatId = chatId;
 
-// Identificar mensagens de voz
-if (mensagem.type === "audio" && mensagem.audio) {
-  bolha.dataset.tipo = "audio";
-  bolha.dataset.duracao = mensagem.audio.seconds || 0;
-}
-
+          if (mensagem.type === "audio" && mensagem.audio) {
+            bolha.dataset.tipo = "audio";
+            bolha.dataset.duracao =
+              mensagem.audio.seconds || 0;
+          }
 
           if (mensagem.senderId === meuId) {
             bolha.classList.add("minha");
           }
 
-          bolha.textContent =
-            mensagem.text || "";
+          bolha.textContent = mensagem.text || "";
 
           lista.appendChild(bolha);
         });
 
-        lista.scrollTop =
-          lista.scrollHeight;
+        lista.scrollTop = lista.scrollHeight;
 
         aviso("aviso-chat", "");
       },
 
       erro => {
-        if (
-          minhaVersao === versaoConversa
-        ) {
-          mostrarErro(
-            "aviso-chat",
-            erro
-          );
+        if (minhaVersao === versaoConversa) {
+          mostrarErro("aviso-chat", erro);
         }
       }
     );
 
   } catch (erro) {
-    if (
-      minhaVersao === versaoConversa
-    ) {
+    if (minhaVersao === versaoConversa) {
       el("texto").disabled = true;
       el("botao-enviar").disabled = true;
 
-      mostrarErro(
-        "aviso-chat",
-        erro
-      );
+      mostrarErro("aviso-chat", erro);
     }
   }
 }
@@ -605,11 +796,7 @@ el("form-enviar").onsubmit = async evento => {
   const texto = el("texto").value.trim();
   const user = auth.currentUser;
 
-  if (
-    !user ||
-    !conversaAtual ||
-    !texto
-  ) {
+  if (!user || !conversaAtual || !texto) {
     return;
   }
 
@@ -619,7 +806,6 @@ el("form-enviar").onsubmit = async evento => {
   el("botao-enviar").disabled = true;
 
   try {
-    // PRIMEIRO SALVAR A MENSAGEM
     const mensagemSalva = await addDoc(
       collection(
         db,
@@ -634,24 +820,16 @@ el("form-enviar").onsubmit = async evento => {
       }
     );
 
-    if (
-      conversaAtual === chatId
-    ) {
+    if (conversaAtual === chatId) {
       el("texto").value = "";
     }
 
     aviso("aviso-chat", "");
 
-    // RESTAURAR BOTÃO IMEDIATAMENTE
-    // A NOTIFICAÇÃO NÃO BLOQUEIA A CONVERSA
-    if (
-      conversaAtual === chatId
-    ) {
+    if (conversaAtual === chatId) {
       el("botao-enviar").disabled = false;
     }
 
-    // SOLICITAR NOTIFICAÇÃO AO SERVIDOR
-    // SEM ATRASAR O ENVIO DA MENSAGEM
     void enviarNotificacao(
       user,
       chatId,
@@ -659,10 +837,7 @@ el("form-enviar").onsubmit = async evento => {
     );
 
   } catch (erro) {
-    mostrarErro(
-      "aviso-chat",
-      erro
-    );
+    mostrarErro("aviso-chat", erro);
 
   } finally {
     if (
@@ -675,6 +850,5 @@ el("form-enviar").onsubmit = async evento => {
 };
 
 // ========================================
-// MENSAGENS PLUS
-// FIM DO MOTOR COMPLETO
+// FIM DO MOTOR MENSAGENS PLUS
 // ========================================
