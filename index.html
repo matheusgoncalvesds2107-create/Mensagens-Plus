@@ -255,36 +255,45 @@ aside {
 .nav-item.ativo { color: #087b5d; font-weight: bold; }
 .nav-item .simbolo { font-size: 24px; }
 
-/* STATUS */
+/* STATUS — visual inspirado na tela de Atualizações */
 
 .tela-status {
   min-width: 0;
   min-height: 0;
   height: 100%;
   overflow-y: auto;
-  background: #fff;
+  background: #0b1114;
+  color: #f5f7f8;
   padding: 22px;
 }
-.status-cabecalho h2 { margin: 0; color: #087b5d; }
-.status-cabecalho p { color: #667781; font-size: 14px; }
+.status-titulo-linha { display:flex; align-items:center; gap:14px; }
+.status-titulo-linha button {
+  border:0; background:transparent; color:#f5f7f8; font-size:28px;
+  padding:4px 8px 4px 0;
+}
+.status-cabecalho h2 { margin: 0; color: #f5f7f8; font-size:25px; font-weight:500; }
+.status-cabecalho p { color: #c2c9cc; font-size: 14px; margin:7px 0; }
 .status-criar {
   display: flex;
   flex-direction: column;
   gap: 10px;
   margin: 18px 0 24px;
   padding: 16px;
-  border: 1px solid #e5e9eb;
+  border: 1px solid #293337;
   border-radius: 16px;
+  background:#141c20;
 }
-.status-criar label { font-size: 13px; font-weight: bold; }
+.status-criar label { font-size: 13px; font-weight: bold; color:#e7eeee; }
 .status-criar textarea {
   width: 100%;
   min-height: 90px;
   resize: vertical;
-  border: 1px solid #d5dddf;
+  border: 1px solid #39474c;
   border-radius: 12px;
   padding: 12px;
   font: inherit;
+  color:#fff;
+  background:#202a2f;
 }
 .status-criar input { width: 100%; }
 .status-criar button {
@@ -295,28 +304,40 @@ aside {
   color: white;
   font-weight: bold;
 }
-#status-aviso { margin: 0; font-size: 12px; color: #667781; overflow-wrap: anywhere; }
-.lista-status { display: grid; gap: 12px; }
+#status-aviso { margin: 0; font-size: 12px; color: #b9c5c8; overflow-wrap: anywhere; }
+.tela-status h3 { font-size:22px; font-weight:500; margin:20px 0 12px; }
+.lista-status { display:flex; gap:12px; overflow-x:auto; padding:4px 0 14px; }
 .status-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border-bottom: 1px solid #edf0f1;
-  overflow-wrap: anywhere;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  gap:10px;
+  flex:0 0 142px;
+  width:142px;
+  height:245px;
+  padding:10px;
+  border:0;
+  border-radius:24px;
+  overflow:hidden;
+  color:#fff;
+  background:linear-gradient(155deg,#263b43,#0b181d 75%);
+  overflow-wrap:anywhere;
 }
 .status-miniatura {
-  width: 58px; height: 58px; flex-shrink: 0;
-  border-radius: 50%; border: 3px solid #25b879;
-  display: grid; place-items: center; overflow: hidden;
-  background: #e7f5ee; color: #087b5d; font-size: 22px;
+  width:64px; height:64px; flex-shrink:0; align-self:flex-start;
+  border-radius:50%; border:3px solid #25d366; padding:2px;
+  display:grid; place-items:center; overflow:hidden;
+  background:#172328; color:#fff; font-size:22px;
 }
 .status-miniatura img, .status-miniatura video {
-  width: 100%; height: 100%; object-fit: cover;
+  width: 100%; height: 100%; object-fit: cover; border-radius:50%;
 }
-.status-conteudo { min-width: 0; flex: 1; }
-.status-hora { color: #667781; font-size: 12px; margin-top: 5px; }
-.status-vazio { color: #667781; font-size: 14px; padding: 12px 0; }
+.status-conteudo { min-width: 0; width:100%; }
+.status-hora { color: #c2c9cc; font-size: 11px; margin-top: 5px; }
+.status-vazio { color: #b9c5c8; font-size: 14px; padding: 12px 0; min-width:220px; }
+.status-item .status-conteudo > div:first-child { font-weight:600; font-size:14px; }
+.status-item:has(video) { background:#1a292e; }
 
 .app.mostrando-status { grid-template-columns: 370px minmax(0, 1fr); }
 .app.mostrando-status .conversa { display: none; }
@@ -325,7 +346,11 @@ aside {
 @media (max-width: 700px) {
   .app.mostrando-status { display: block; }
   .app.mostrando-status aside { display: flex; height: 100%; }
-  .app.mostrando-status .tela-status { height: 100%; }
+  .app.mostrando-status .tela-status {
+    display:block !important; position:fixed; inset:0; z-index:20;
+    height:100dvh; width:100%; padding:22px 16px;
+    padding-bottom:max(22px, env(safe-area-inset-bottom));
+  }
   .app.mostrando-status #contatos { display: none; }
   .app.mostrando-status .pesquisa,
   .app.mostrando-status .filtros { display: none; }
@@ -680,7 +705,10 @@ aside {
 
     <section id="tela-status" class="tela-status oculto">
       <div class="status-cabecalho">
-        <h2>Status</h2>
+        <div class="status-titulo-linha">
+          <button id="status-voltar" type="button" aria-label="Voltar para mensagens">←</button>
+          <div><h2>Atualizações</h2><p>Status</p></div>
+        </div>
         <p>Compartilhe fotos, vídeos ou textos por 24 horas.</p>
       </div>
       <div class="status-criar">
@@ -880,7 +908,7 @@ aside {
       const conteudo = document.createElement("div");
       conteudo.className = "status-conteudo";
       const texto = document.createElement("div");
-      texto.textContent = item.texto || (item.tipo === "video" ? "Status em vídeo" : "Status com foto");
+      texto.textContent = item.texto || (item.tipo === "video" ? "Status em vídeo" : item.tipo === "imagem" ? "Status com foto" : "Meu status");
       const hora = document.createElement("div");
       hora.className = "status-hora";
       hora.textContent = "Publicado agora · desaparece em até 24 horas";
@@ -892,6 +920,12 @@ aside {
       listaStatus.append(linha);
     });
   }
+
+  document.getElementById("status-voltar").onclick = () => {
+    app.classList.remove("mostrando-status");
+    navMensagens.classList.add("ativo");
+    navStatus.classList.remove("ativo");
+  };
 
   navStatus.onclick = () => {
     app.classList.remove("chat-aberto");
