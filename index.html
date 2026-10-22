@@ -255,6 +255,82 @@ aside {
 .nav-item.ativo { color: #087b5d; font-weight: bold; }
 .nav-item .simbolo { font-size: 24px; }
 
+/* STATUS */
+
+.tela-status {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  background: #fff;
+  padding: 22px;
+}
+.status-cabecalho h2 { margin: 0; color: #087b5d; }
+.status-cabecalho p { color: #667781; font-size: 14px; }
+.status-criar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 18px 0 24px;
+  padding: 16px;
+  border: 1px solid #e5e9eb;
+  border-radius: 16px;
+}
+.status-criar label { font-size: 13px; font-weight: bold; }
+.status-criar textarea {
+  width: 100%;
+  min-height: 90px;
+  resize: vertical;
+  border: 1px solid #d5dddf;
+  border-radius: 12px;
+  padding: 12px;
+  font: inherit;
+}
+.status-criar input { width: 100%; }
+.status-criar button {
+  border: 0;
+  border-radius: 24px;
+  padding: 13px;
+  background: #00a884;
+  color: white;
+  font-weight: bold;
+}
+#status-aviso { margin: 0; font-size: 12px; color: #667781; overflow-wrap: anywhere; }
+.lista-status { display: grid; gap: 12px; }
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid #edf0f1;
+  overflow-wrap: anywhere;
+}
+.status-miniatura {
+  width: 58px; height: 58px; flex-shrink: 0;
+  border-radius: 50%; border: 3px solid #25b879;
+  display: grid; place-items: center; overflow: hidden;
+  background: #e7f5ee; color: #087b5d; font-size: 22px;
+}
+.status-miniatura img, .status-miniatura video {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.status-conteudo { min-width: 0; flex: 1; }
+.status-hora { color: #667781; font-size: 12px; margin-top: 5px; }
+.status-vazio { color: #667781; font-size: 14px; padding: 12px 0; }
+
+.app.mostrando-status { grid-template-columns: 370px minmax(0, 1fr); }
+.app.mostrando-status .conversa { display: none; }
+.app.mostrando-status .tela-status { display: block !important; }
+
+@media (max-width: 700px) {
+  .app.mostrando-status { display: block; }
+  .app.mostrando-status aside { display: flex; height: 100%; }
+  .app.mostrando-status .tela-status { height: 100%; }
+  .app.mostrando-status #contatos { display: none; }
+  .app.mostrando-status .pesquisa,
+  .app.mostrando-status .filtros { display: none; }
+}
+
 /* CONVERSA */
 
 .conversa {
@@ -592,15 +668,32 @@ aside {
       <nav class="navegacao" aria-label="Navegação principal">
         <button class="nav-item ativo" id="nav-conversas" type="button">
           <span class="simbolo">▣</span>
-          Conversas
+          Mensagens
         </button>
 
-        <button class="nav-item" id="nav-perfil" type="button">
+        <button class="nav-item" id="nav-status" type="button">
           <span class="simbolo">◉</span>
-          Você
+          Status
         </button>
       </nav>
     </aside>
+
+    <section id="tela-status" class="tela-status oculto">
+      <div class="status-cabecalho">
+        <h2>Status</h2>
+        <p>Compartilhe fotos, vídeos ou textos por 24 horas.</p>
+      </div>
+      <div class="status-criar">
+        <label for="status-texto">Escreva um status</label>
+        <textarea id="status-texto" maxlength="500" placeholder="O que você gostaria de compartilhar?"></textarea>
+        <label for="status-arquivo">Ou escolha uma foto/vídeo</label>
+        <input id="status-arquivo" type="file" accept="image/*,video/*">
+        <button id="publicar-status" type="button">Publicar status</button>
+        <p id="status-aviso" role="status"></p>
+      </div>
+      <h3>Atualizações recentes</h3>
+      <div id="lista-status" class="lista-status"></div>
+    </section>
 
     <section class="conversa">
       <div class="barra-chat">
@@ -741,11 +834,117 @@ aside {
     app.classList.remove("chat-aberto");
   };
 
-  document.getElementById("nav-perfil").onclick = () => {
-    document.querySelector(".mp-perfil-btn")?.click();
+  const navMensagens = document.getElementById("nav-conversas");
+  const navStatus = document.getElementById("nav-status");
+  const telaStatus = document.getElementById("tela-status");
+  const listaStatus = document.getElementById("lista-status");
+  const statusTexto = document.getElementById("status-texto");
+  const statusArquivo = document.getElementById("status-arquivo");
+  const statusAviso = document.getElementById("status-aviso");
+
+  function lerStatus() {
+    try {
+      const agora = Date.now();
+      const itens = JSON.parse(localStorage.getItem("mensagensPlusStatusLocal") || "[]")
+        .filter(item => agora - item.criadoEm < 24 * 60 * 60 * 1000);
+      localStorage.setItem("mensagensPlusStatusLocal", JSON.stringify(itens));
+      return itens;
+    } catch (_) { return []; }
+  }
+
+  function renderizarStatus() {
+    const itens = lerStatus();
+    listaStatus.replaceChildren();
+    if (!itens.length) {
+      const vazio = document.createElement("p");
+      vazio.className = "status-vazio";
+      vazio.textContent = "Ainda não há status publicados neste aparelho.";
+      listaStatus.append(vazio);
+      return;
+    }
+    itens.slice().reverse().forEach(item => {
+      const linha = document.createElement("div");
+      linha.className = "status-item";
+      const mini = document.createElement("div");
+      mini.className = "status-miniatura";
+      if (item.tipo === "texto") {
+        mini.textContent = "T";
+      } else if (item.tipo === "imagem") {
+        const img = document.createElement("img");
+        img.src = item.conteudo;
+        img.alt = "Foto do status";
+        mini.append(img);
+      } else {
+        mini.textContent = "▶";
+      }
+      const conteudo = document.createElement("div");
+      conteudo.className = "status-conteudo";
+      const texto = document.createElement("div");
+      texto.textContent = item.texto || (item.tipo === "video" ? "Status em vídeo" : "Status com foto");
+      const hora = document.createElement("div");
+      hora.className = "status-hora";
+      hora.textContent = "Publicado agora · desaparece em até 24 horas";
+      conteudo.append(texto, hora);
+      linha.append(mini, conteudo);
+      if (item.tipo === "video") {
+        linha.title = "Vídeo selecionado; a prévia será exibida quando a integração de mídia estiver concluída.";
+      }
+      listaStatus.append(linha);
+    });
+  }
+
+  navStatus.onclick = () => {
+    app.classList.remove("chat-aberto");
+    app.classList.add("mostrando-status");
+    navStatus.classList.add("ativo");
+    navMensagens.classList.remove("ativo");
+    renderizarStatus();
   };
 
-  document.getElementById("nav-conversas").onclick = () => {
+  navMensagens.onclick = () => {
+    app.classList.remove("mostrando-status", "chat-aberto");
+    navMensagens.classList.add("ativo");
+    navStatus.classList.remove("ativo");
+  };
+
+  document.getElementById("publicar-status").onclick = () => {
+    const texto = statusTexto.value.trim();
+    const arquivo = statusArquivo.files && statusArquivo.files[0];
+    if (!texto && !arquivo) {
+      statusAviso.textContent = "Escreva um texto ou selecione uma foto/vídeo.";
+      return;
+    }
+    if (arquivo && arquivo.size > 3 * 1024 * 1024) {
+      statusAviso.textContent = "Escolha um arquivo de até 3 MB nesta versão de interface.";
+      return;
+    }
+    const salvar = conteudo => {
+      const itens = lerStatus();
+      itens.push({
+        id: String(Date.now()),
+        tipo: arquivo ? (arquivo.type.startsWith("video/") ? "video" : "imagem") : "texto",
+        texto,
+        conteudo: conteudo || "",
+        criadoEm: Date.now()
+      });
+      try {
+        localStorage.setItem("mensagensPlusStatusLocal", JSON.stringify(itens));
+        statusTexto.value = "";
+        statusArquivo.value = "";
+        statusAviso.textContent = "Status publicado neste aparelho. A sincronização entre contas precisa ser ligada ao Firebase.";
+        renderizarStatus();
+      } catch (_) {
+        statusAviso.textContent = "Não foi possível guardar este status. Tente uma foto menor ou apenas texto.";
+      }
+    };
+    if (!arquivo) { salvar(""); return; }
+    const reader = new FileReader();
+    reader.onload = () => salvar(String(reader.result || ""));
+    reader.onerror = () => { statusAviso.textContent = "Não foi possível ler esse arquivo."; };
+    reader.readAsDataURL(arquivo);
+  };
+
+  document.getElementById("voltar-chat").onclick = () => {
     app.classList.remove("chat-aberto");
   };
 
