@@ -930,6 +930,7 @@ aside {
   navStatus.onclick = () => {
     app.classList.remove("chat-aberto");
     app.classList.add("mostrando-status");
+    telaStatus.classList.remove("oculto");
     navStatus.classList.add("ativo");
     navMensagens.classList.remove("ativo");
     renderizarStatus();
@@ -937,6 +938,14 @@ aside {
 
   navMensagens.onclick = () => {
     app.classList.remove("mostrando-status", "chat-aberto");
+    telaStatus.classList.add("oculto");
+    navMensagens.classList.add("ativo");
+    navStatus.classList.remove("ativo");
+  };
+
+  document.getElementById("status-voltar").onclick = () => {
+    app.classList.remove("mostrando-status", "chat-aberto");
+    telaStatus.classList.add("oculto");
     navMensagens.classList.add("ativo");
     navStatus.classList.remove("ativo");
   };
